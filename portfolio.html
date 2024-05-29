@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ckuro</title>
+    <meta name="description" content="c.kuro - portfolio">
+    <link href="/assets/css/style.css" rel="stylesheet" type="text/css" media="all">
+    
+  </head>
+  <body>
+    <div id="portfolio" class="w-full h-[100vh] bg-dark p-4 relative z-0">
+      <div class="container mx-auto flex flex-col justify-center items-center h-full">
+        <a href="/" class="text-white matrix text-6xl font-thin fade-in">{{ state.title }}</a>
+        <h1 class="text-white text-xl font-thin my-10 fade-in">{{ state.subtitle }}</h1>
+      </div>
+    </div> 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+      const { createApp, ref } = Vue
+      
+      createApp({
+        setup() {
+          
+          const message = ref('Using Vue.')
+          const state = ref({
+            title: `ckuro`,
+            subtitle: `Portfolio`,
+            links: [
+              { label: `Home`, destination: `/` }  
+            ]
+          })
+          
+          
+          return {
+            message,
+            state
+          }
+        }
+      }).mount('#portfolio')
+    </script>
+  </body>
+</html>

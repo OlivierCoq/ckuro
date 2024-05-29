@@ -25,6 +25,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
+    
+      /* 
+        - setup Blooger blog
+        - setup Blogger API credentials with key, etc
+        - More information: https://developers.google.com/blogger/docs/3.0/using
+      */
+    
+    
+    
       const { createApp, ref, reactive } = Vue
       
       createApp({
@@ -33,8 +42,8 @@
         setup() {
           
           const state = reactive({
-            title: `ckuro`,
-            subtitle: `Future home of ckuro`,
+            title: `blog`,
+            subtitle: `Future blog of ckuro`,
             nav_links: [
               { label: `Portfolio`, destination: `/portfolio.html` },
               { label: `Music`, destination: `/music.html` },
@@ -45,7 +54,7 @@
             // data to be fetched:
             external_data: {
               // Example, cats:
-              cats: null,
+              blog_posts: null,
               error: null
             }
           })
@@ -64,7 +73,7 @@
               .then((json) => (state.external_data.cats = json))
               .catch((err) => (state.external_data.error.value = err))
           } 
-          get_cat_data()
+          // get_cat_data()
           
               
           
