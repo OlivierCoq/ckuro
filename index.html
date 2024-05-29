@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ckuro</title>
+    <meta name="description" content="Home of C.Kuro">
+    <link href="/assets/css/style.css" rel="stylesheet" type="text/css" media="all">
+    
+  </head>
+  <body>
+    <div id="ckuro" class="w-full h-[100vh] bg-dark p-4 relative z-0">
+      <div class="container mx-auto flex flex-col justify-center items-center h-full">
+        <a href="/" class="text-white matrix text-6xl font-thin fade-in">{{ state.title }}</a>
+        <h1 class="text-white text-xl font-thin my-10 fade-in">{{ state.subtitle }}</h1>
+        <div class="w-full lg:w-2/3 mx-auto p-4 flex flex-row items-center justify-between">
+          <a 
+            v-for="(link, a) in state.nav_links" :key="a" 
+            :href="link.destination" 
+            class="text-white text-lg font-thin fade-in mx-3 matrix hover-text-primary_accent"
+          >{{ link.label }}</a>
+        </div>
+      </div>
+    </div> 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+      const { createApp, ref, reactive } = Vue
+      
+      createApp({
+        
+        
+        setup() {
+          
+          const state = reactive({
+            title: `ckuro`,
+            subtitle: `Future home of ckuro`,
+            nav_links: [
+              { label: `Portfolio`, destination: `/portfolio.html` },
+              { label: `Music`, destination: `/music.html` },
+              { label: `Blog`, destination: `/blog.html` },
+              { label: `Store`, destination: `/store.html` },
+              { label: `Community`, destination: `/community.html` }
+            ], 
+            // data to be fetched:
+            external_data: {
+              // Example, cats:
+              cats: null,
+              error: null
+            }
+          })
+          
+          const get_cat_data = () => {
+            
+           fetch('https://catfact.ninja/breeds',
+              {
+                method: 'GET',
+                headers: {
+                  "Accept": "application/json",
+                  // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+              })
+              .then((res) => res.json())
+              .then((json) => (state.external_data.cats = json))
+              .catch((err) => (state.external_data.error.value = err))
+          } 
+          get_cat_data()
+          
+              
+          
+          return {
+            state
+          }
+        }
+      }).mount('#ckuro')
+    </script>
+  </body>
+</html>
