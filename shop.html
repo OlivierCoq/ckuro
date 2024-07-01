@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ckuro</title>
+    <meta name="description" content="Home of C.Kuro">
+    <link href="./assets/css/style.css" rel="stylesheet" type="text/css" media="all">
+    <link href="./assets/css/store.css" rel="stylesheet" type="text/css" media="all">
+  </head>
+  <body>
+    <div id="ckuro" class="w-full min-h-[100vh] bg-dark p-4 flex flex-col">
+
+      <div class="container flex flex-col md:flex-row p-4 mx-auto">
+
+        <div class="order-last md:order-first m-4 w-full md:w-3/4 h-full">
+          <div class="border-2 border-white">
+
+            <!-- Store from ecwid goes here -->
+            <div id="my-store-104674311"></div>
+            <div>
+              <script data-cfasync="false" type="text/javascript" src="https://app.ecwid.com/script.js?104674311&data_platform=code&data_date=2024-06-08" charset="utf-8"></script><script type="text/javascript"> xProductBrowser("categoriesPerRow=3","views=grid(20,3) list(60) table(60)","categoryView=grid","searchView=list","id=my-store-104674311");</script>
+            </div>
+          </div>
+        </div>
+
+          <!-- Nav Component-->
+        <div class="order-first md:order-last m-4 w-full md:w-1/4">
+          <div class="w-full flex flex-col justify-start items-start border-2 border-white pb-8">
+            <div class="p-4 flex flex-col justify-center items-start">
+              <a href="./index.html" class="text-white matrix text-6xl font-thin">{{ state.title }}</a>
+              <h1 class="text-white text-xl font-thin mt-4 mb-10">{{ state.subtitle }}</h1>
+            </div>
+            <div v-for="(link, a) in state.nav_links" :key="a"  class="w-full p-4 flex flex-row justify-start items-start">
+              <a :href="link.destination" class="text-white text-lg font-thin matrix hover-text-primary_accent cursor-pointer">{{ link.label }}</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div> 
+    <script src="./assets/js/tailwind.js"></script>
+    <script src="./assets/js/vue.js"></script>
+    <script>
+      const { createApp, ref, reactive } = Vue
+      
+      createApp({
+        
+        
+        setup() {
+          
+          const state = reactive({
+            title: `ckuro`,
+            subtitle: `cKuro Shop`,
+            nav_links: [
+              { label: `Portfolio`, destination: `./portfolio.html` },
+              { label: `Music`, destination: `./music.html` },
+              { label: `Blog`, destination: `./blog.html` },
+              { label: `Shop`, destination: `./shop.html` },
+              { label: `Community`, destination: `./community.html` }
+            ], 
+            // data to be fetched:
+            external_data: {
+              // Example, cats:
+              cats: null,
+              error: null
+            }
+          })
+          
+          const get_cat_data = () => {
+            
+           fetch('https://catfact.ninja/breeds',
+              {
+                method: 'GET',
+                headers: {
+                  "Accept": "application/json",
+                  // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+              })
+              .then((res) => res.json())
+              .then((json) => (state.external_data.cats = json))
+              .catch((err) => (state.external_data.error.value = err))
+          } 
+          get_cat_data()
+          
+              
+          
+          return {
+            state
+          }
+        }
+      }).mount('#ckuro')
+    </script>
+  </body>
+</html>

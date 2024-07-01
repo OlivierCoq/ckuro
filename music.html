@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ckuro - music</title>
+    <meta name="description" content="Home of C.Kuro">
+    <link href="./assets/css/style.css" rel="stylesheet" type="text/css" media="all">
+    <link href="./assets/css/store.css" rel="stylesheet" type="text/css" media="all">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.4.2/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <script src="https://kit.fontawesome.com/8c366cb50b.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div id="ckuro" class="w-full min-h-[100vh] bg-dark p-4 flex flex-col relative z-0">
+
+      <div class="container flex flex-col md:flex-row p-4 mx-auto relative h-full">
+
+        <div class="order-last md:order-first m-4 w-full md:w-3/4 h-full">
+
+            <!-- Main Body Shell -->
+          <div class="border-2 border-white h-full">
+            <div class="w-full h-full mx-auto">
+
+                <!-- Music Search -->
+              <div class="w-full flex flex-row p-2 items-center justify-between">
+                <input v-model="state.search.query" type="text" class="w-[90%] p-4 border-2 border-white bg-dark text-white" @keydown="doSearch" placeholder="Search Music">       
+                <div class="border-2 border-white p-4 w-[10%] h-[100%] ms-2 hover:cursor-pointer" @click="doSearch">
+                  <i class="fi fi-br-search mx-4 text-white"></i>
+                </div>
+              </div>
+
+                <!-- Music Results -->
+              <div class="w-full flex flex-col p-2 min-h-[90%] overflow-y-scroll">
+                <div v-for="(track, a) in state.results" :key="a" class="w-full p-2 flex flex-row" :class="state.player.track == track ? 'bg-zinc-900' : ''">
+                  <div class="w-[3%] h-[3rem] flex flex-col justify-center items-start">
+                    <i 
+                      v-if="(state.player.track == track) && (state.player.playing)" 
+                      class="fa fa-pause play-btn text-neutral-900 dark:text-white text-white me-3 hover:cursor-pointer" 
+                      :class="state.player.track == track ? 'text-secondary_accent' : 'text-white'"
+                      @click="pause(track, a)"
+                    ></i>
+                    <i v-else 
+                      class="fa fa-play play-btn text-neutral-900 dark:text-white text-white me-3 hover:cursor-pointer" 
+                      :class="state.player.track == track ? 'text-secondary_accent' : 'text-white'"
+                      @click="play(track, a)"
+                    ></i>
+                  </div>
+                  <div class="w-[40%] h-auto flex flex-row justify start  items-center text-start">
+                    <p :class="state.player.track == track ? 'text-secondary_accent' : 'text-white'">{{ track.title }}</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+          <!-- Nav Component-->
+        <div class="order-first md:order-last m-4 w-full md:w-1/4">
+          <div class="w-full flex flex-col justify-start items-start border-2 border-white pb-8">
+            <div class="p-4 flex flex-col justify-center items-start">
+              <a href="./index.html" class="text-white matrix text-6xl font-thin">{{ state.title }}</a>
+              <h1 class="text-white text-xl font-thin mt-4 mb-10">{{ state.subtitle }}</h1>
+            </div>
+            <div v-for="(link, a) in state.nav_links" :key="a"  class="w-full p-4 flex flex-row justify-start items-start">
+              <a :href="link.destination" class="text-white text-lg font-thin matrix hover-text-primary_accent cursor-pointer">{{ link.label }}</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Music Player -->
+      <div v-if="state.player.track" id="music_player" class="music-player h-[5em] absolute bottom-0 w-full bg-black z-20 left-0">
+        <div class="w-full h-full flex flex-row justifty-start items-start">
+          <div class="w-[20%] h-full flex flex-col px-5">
+              <img :src="state.player.track.album.art" :alt="state.player.track.title" class="w-[150px] mt-[-7rem]">
+              <p class="text-white font-thin matrix text-sm">{{ state.player.track.title }}</p>
+              <!-- <small class="text-white font-thin text-xs">{{ state.player.track.album.title }}</small> -->
+          </div>
+          <div class="w-[60%]">
+            <audio id="audio_player" :key="state.comp_key" controls controlsList="nodownload" autoplay oncontextmenu="return false;" style="display: none;">
+              <source :src="state.player.track.audio_file" type="audio/mpeg" />
+            </audio>
+            <div class="flex flex-col w-full mt-2">
+              <div class="h-[3rem] flex flex-row text-white justify-center items-center">
+                <i class="fa-solid fa-backward-step mx-3 cursor-pointer text-xl" @click="select_previous"></i>
+                <i v-if="!state.player.playing" class="fa-solid fa-play mx-3 cursor-pointer text-3xl" @click="play(state.player.track)"></i>
+                <i v-else class="fa-solid fa-pause mx-3 cursor-pointer text-3xl" @click="pause(state.player.track)"></i>
+                <i class="fa-solid fa-forward-step mx-3 cursor-pointer text-xl" @click="select_next"></i>
+              </div>
+              <div class="h-[2rem] w-full flex flex-row items-center justify-center">
+                <div class="w-[10%] h-[15px] mb-[1rem] flex flex-col justify-center align-center items-end px-3">
+                  <p v-if="state.player.track" class="text-white">{{ state.player.elapsed }}</p>
+                </div>
+                <div id="timeline" class="w-[80%] h-[5px] mb-[1rem] bg-neutral-900 mx-auto cursor-pointer" @click="scrub($event)">
+                  <div v-if="state.player.track" class="scrubber h-[5px] bg-primary_accent hover:cursor-pointer" :style="{ width: `${state.player.track_time}%` }" ></div>
+                </div>
+                <div class="w-[10%] h-[15px] mb-[1rem] flex flex-col justify-center align-center items-start px-3">
+                  <p v-if="state.player.track" class="text-white">{{ state.player.duration }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="w-[20%] h-full">
+            <div class="h-full w-full flex flex-row items-center justify-start">
+              <i class="fas text-white mx-3 cursor-pointer" :class="state.player.mute ? 'fa-volume-mute': 'fa-volume-up' " @click="mute_track"></i>
+              <div id="volume_adjuster" class="w-[60%] h-[5px] bg-neutral-900 cursor-pointer" @click="adjust_volume">
+                <div class="scrubber h-[5px] bg-primary_accent hover:cursor-pointer" :style="{ width: `${state.player.volume * 100}%` }"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>  
+    <script src="./assets/js/tailwind.js"></script>
+    <script src="./assets/js/vue.js"></script>
+    <script>
+      const { createApp, ref, reactive, nextTick, onMounted, watch } = Vue
+
+      
+      createApp({
+        
+        
+        setup() {
+          
+          const state = reactive({
+            title: `ckuro`,
+            subtitle: `C Kuro Music`,
+            nav_links: [
+              { label: `Portfolio`, destination: `./portfolio.html` },
+              { label: `Music`, destination: `./music.html` },
+              { label: `Blog`, destination: `./blog.html` },
+              { label: `Shop`, destination: `./shop.html` },
+              { label: `Community`, destination: `./community.html` }
+            ], 
+            filters: [],
+            search: {
+              query: '',
+              results: null,
+              error: null
+            
+            },
+            albums: [],
+            results: [],
+            tracks: [
+              {
+                id: 1,
+                title: 'CHK D WNDW',
+                artist: 'C Kuro',
+                album: {
+                  art: 'https://res.cloudinary.com/dgmz3uymj/image/upload/v1719462937/IMG_4027_ikmba6.jpg',
+                  credits: '',
+                  description: '',
+                  filters: []
+                },
+                audio_file: 'https://res.cloudinary.com/dgmz3uymj/video/upload/v1719462940/CHK_D_WNDW_bcwh0x.wav'
+              },
+              {
+                id: 2,
+                title: 'Young_Deji_-_Ozone_Interlude_vlxzrq',
+                artist: 'C Kuro',
+                album: {
+                  art: 'https://res.cloudinary.com/dgmz3uymj/image/upload/v1719462937/IMG_4027_ikmba6.jpg',
+                  credits: '',
+                  description: '',
+                  filters: []
+                },
+                audio_file: 'https://res.cloudinary.com/dgmz3uymj/video/upload/v1719462947/Young_Deji_-_Ozone_Interlude_vlxzrq.wav'
+              },
+              {
+                id: 3,
+                title: 'ZelooperZ_-_10_a_Piece',
+                artist: 'C Kuro',
+                album: {
+                  art: 'https://res.cloudinary.com/dgmz3uymj/image/upload/v1719462937/IMG_4027_ikmba6.jpg',
+                  credits: '',
+                  description: '',
+                  filters: []
+                },
+                audio_file: 'https://res.cloudinary.com/dgmz3uymj/video/upload/v1719462945/Young_Deji_-_Ozone_Interlude_q41263.flac'
+              },
+              {
+                id: 4,
+                title: 'TyriqueOrDie_-_STARBEAM_riuey3',
+                artist: 'C Kuro',
+                album: {
+                  art: 'https://res.cloudinary.com/dgmz3uymj/image/upload/v1719462937/IMG_4027_ikmba6.jpg',
+                  credits: '',
+                  description: '',
+                  filters: []
+                },
+                audio_file: 'https://res.cloudinary.com/dgmz3uymj/video/upload/v1719462945/TyriqueOrDie_-_STARBEAM_riuey3.flac'
+              },
+              {
+                id: 5,
+                title: 'WHATYOUWANTNOW',
+                artist: 'C Kuro - HUGO JOE',
+                album: {
+                  art: 'https://res.cloudinary.com/dgmz3uymj/image/upload/v1719462937/IMG_4027_ikmba6.jpg',
+                  credits: '',
+                  description: '',
+                  filters: []
+                },
+                audio_file: 'https://res.cloudinary.com/dgmz3uymj/video/upload/v1719462936/DAYYTONA_FOX_-_whatyouwantnow_spceum.flac'
+              },
+              {
+                id: 6,
+                title: 'lackVill_-_Cookies_vqw6cs',
+                artist: 'C Kuro',
+                album: {
+                  art: 'https://res.cloudinary.com/dgmz3uymj/image/upload/v1719462937/IMG_4027_ikmba6.jpg',
+                  credits: '',
+                  description: '',
+                  filters: []
+                },
+                audio_file: 'https://res.cloudinary.com/dgmz3uymj/video/upload/v1719462937/Hugo_Joe_-_Sade_pqnnuv.flac'
+              }
+            ],
+            active_filters: [],
+            search: {
+                query: ''
+            },
+            queryObj: '',
+            player: {
+              track: null,
+              playing: false,
+              paused: false,
+              selecting: false,
+              track_time: '',
+              elapsed: '',
+              duration:'',
+              volume: 0.75,
+              mute: false
+            },
+            comp_key: 0,
+            filter_key: 0,
+            filter_option_key: 0,
+            // data to be fetched:
+            external_data: {
+              // Example, cats:
+              cats: null,
+              error: null
+            }
+          })
+          
+          const get_cat_data = () => {
+            
+           fetch('https://catfact.ninja/breeds',
+              {
+                method: 'GET',
+                headers: {
+                  "Accept": "application/json",
+                  // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+              })
+              .then((res) => res.json())
+              .then((json) => (state.external_data.cats = json))
+              .catch((err) => (state.external_data.error.value = err))
+          } 
+          get_cat_data()
+
+            // Filter Functions:
+        const setupFilters = () => {
+            this.$fire.firestore.collection('filters').get()
+            .then((snapshot) => { snapshot.docs.forEach((f) => { state.filters.push(f.data()) }) })   
+            .then(() => { nextTick(()=> {
+                state.filters.forEach((filt) => { filt['active'] = false })
+            }) })     
+        }
+        const selectFilterMenu = (filter) => {
+            filter.active = !filter.active
+            this.filter_key += 1
+        }
+        const selectFilter = (filter, option) => {
+            filter.active = !filter.active
+            option.active = !option.active
+        }
+        const clearFilters = () => {
+            this.filters.forEach((filter) => {
+                nextTick(()=> {
+                    removeFilter(filter)
+                    // filter.active = false
+                    // filter.options.forEach((option) => {
+                    //     option.active = false
+                    // })
+                })
+            })
+            state.filter_option_key += 2
+        }
+        const confirm = () => {
+            console.log('.')
+        }
+            // Albums
+        const fetchAlbums = () => {
+            const thisObj = this
+            this.$fire.firestore.collection('albums').get()
+              .then((snapshot) => { snapshot.forEach((albm) => { state.albums.push(albm.data()) }) })
+              .then(()=> { state.fetchTracks() })
+        }
+        
+        //Track functions:
+        const applyFilterOption = (select_option) => {
+            select_option['active'] = true 
+            state.filter_option_key += 1
+                // Add to list of used filters. Ensure no duplicates:
+            if(!state.active_filters.includes(select_option)) { 
+                state.active_filters.push(select_option) 
+
+                // loops throught a filter set and returns if matches OPTION
+                const check_filter_set = (filter_set, opt) => {
+                    let match
+                    filter_set.tags.forEach((tag) => {
+                        if(tag.name.toLowerCase().includes(opt.name.toLowerCase())) {
+                            if(!match) { match = 'match' }
+                        }
+                    })
+                    return match
+                }
+                // run ^ function on each filter set of track and return if ANY are positive
+                const check_match = (track, opt) => {
+                    return check_filter_set(track.filters[0], opt) || check_filter_set(track.filters[1], opt) || check_filter_set(track.filters[2], opt)          
+                }
+                // run filter function with ^ as criteria
+                state.results = state.results.filter((track) => {
+                return check_match(track, select_option)
+                })           
+            }
+        }
+        const removeFilter = (option) => {
+            option.active = false
+            console.log('removing filter', option)
+            if(state.active_filters.length !== 1) {
+                state.active_filters = state.active_filters.filter((flr) => { return flr.name !== option.name })
+                state.active_filters.forEach((opt) => { applyFilterOption(opt) })
+                this.filter_key += 1
+            } else {clearFilters()}
+        }
+        const reset = () => {
+          state.results = state.tracks
+        }        
+      // Interface actions:
+          // Player
+        const fire_play = () => {
+            const audio_player = document.getElementById('audio_player')
+            nextTick(() => {
+              audio_player.play()
+              state.player.playing = true
+              update_tracktime()
+            })
+        }      
+        const format_time = (num) => {
+            let seconds = parseInt(num), minutes = parseInt(seconds / 60)
+
+            seconds -= minutes * 60;
+            const hours = parseInt(minutes / 60)
+            minutes -= hours * 60;
+
+            if (hours === 0) return `${minutes}:${String(seconds % 60).padStart(2, 0)}`
+            else return `${String(hours).padStart(2, 0)}:${minutes}:${String(seconds % 60).padStart(2, 0)}`
+        }
+        const scrub = (e) => {
+            const audio_player = document.getElementById('audio_player'),
+                  timeline = document.getElementById('timeline'),
+                  end_width = window.getComputedStyle(timeline).width, 
+                  target_time = e.offsetX / parseInt(end_width) * audio_player.duration
+
+            audio_player.currentTime = target_time
+        }
+        const reset_scrubber = () => {
+            const audio_player = document.getElementById('audio_player')
+            nextTick(() => {
+              audio_player.currentTime = 0
+              state.player.track_time = 0
+              state.player.elapsed = '00:00'
+              state.player.duration = format_time(audio_player.duration)
+            })
+        }
+        const scrub_int = () => {
+          setInterval(() => { 
+            state.player.track_time = audio_player.currentTime / audio_player.duration * 100
+            state.player.duration = format_time(audio_player.duration)
+            state.player.elapsed = format_time(audio_player.currentTime)
+            if(state.player.track_time === 100) { clearInterval(scrub_int) }
+          }, 1000);
+        }
+        update_tracktime = () => {
+            const audio_player = document.getElementById('audio_player')
+            nextTick(() => {
+              if(state.player.playing) {
+                scrub_int()
+              } else {
+                state.player.track_time = 0
+                state.player.elapsed = '00:00'
+                state.player.duration = format_time(audio_player.duration)
+                //
+              }
+            })
+        }
+        
+        // User actions
+           // Player     
+        const play = (track, index) => {
+
+          const target_track = track
+
+          if(state.player.track) {
+            if(state.player.track.id === track.id){ fire_play() } 
+            else {
+              state.player.track = false
+              state.player.playing = false
+              state.player.paused = true
+              nextTick(() => {
+                state.player.track = track
+                nextTick(() => { fire_play() })
+              })
+            }
+          } else {
+            state.player.track = track
+            nextTick(() => { fire_play() })
+          }
+
+        }
+        const pause = (track) => {
+            // const thisObj = this
+            const audio_player = document.getElementById('audio_player')
+            audio_player.pause()
+            state.player.playing = false
+            state.player.paused = true
+        } 
+        const select_previous = () =>{
+            const target = state.player.track, prev = state.results.indexOf(target) - 1
+            state.player.track = false
+            nextTick(()=> {
+              // console.log('selecting previous track', prev)
+              state.player.track = state.results[prev] ? state.results[prev] : target
+              const audio_player = document.getElementById('audio_player')
+              // reset_scrubber()
+              nextTick(() => { fire_play() })
+            })
+        }
+        const select_next = () => {
+            const target = state.player.track, next = state.results.indexOf(target) + 1
+            state.player.track = false
+            nextTick(()=> {
+              // console.log('selecting next track', next)
+              state.player.track = state.results[next] ? state.results[next] : target
+              const audio_player = document.getElementById('audio_player')
+              // reset_scrubber()
+              nextTick(() => { fire_play() })
+            })
+        }
+        const mute_track = () => {
+            const audio_player = document.getElementById('audio_player')
+            state.player.mute = !state.player.mute
+            audio_player.muted = !audio_player.muted
+        }
+        const adjust_volume = (e) => {
+            const audio_player = document.getElementById('audio_player')
+            const volume_adjuster = document.getElementById('volume_adjuster')
+            const volume = (e.offsetX / volume_adjuster.offsetWidth)
+            audio_player.volume = volume
+            state.player.volume = volume
+        }
+
+          // Search
+        const doSearch = () => {
+          if((state.search.query === '') || (state.search.query.length < 2)) { state.results = state.tracks }
+          else {
+            state.results = state.tracks.filter((track) => {
+              return track.title.toLowerCase().includes(state.search.query.toLowerCase())
+            })
+          }
+        }
+
+
+  onMounted(()=> {
+    reset()
+  })
+
+  // Watch if state.player.track changes:
+  watch(() => state.player.track, (newVal, oldVal) => {
+    if(newVal) {
+      const audio_player = document.getElementById('audio_player')
+      // audio_player.src = newVal.audio_file
+      // audio_player.play()
+      // state.player.playing = true
+      // state.player.paused = false
+      // state.player.track_time = 0
+      // state.player.elapsed = '00:00'
+      // state.player.duration = format_time(audio_player.duration)
+      nextTick(() => {
+        update_tracktime()
+      })
+    }
+  }, { immediate: true, deep: true })
+
+          
+          return {
+            state,
+            doSearch,
+            setupFilters,
+            selectFilterMenu,
+            selectFilter,
+            clearFilters,
+            confirm,
+            applyFilterOption,
+            removeFilter,
+            play,
+            pause,
+            select_previous,
+            select_next,
+            mute_track,
+            reset,
+            fire_play,
+            scrub,
+            update_tracktime,
+            format_time,
+            adjust_volume
+          }
+        }
+      }).mount('#ckuro')
+    </script>
+  </body>
+</html>
