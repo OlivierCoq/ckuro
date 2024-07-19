@@ -3,39 +3,215 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ckuro</title>
+    <title>ckuro - portfolio</title>
     <meta name="description" content="c.kuro - portfolio">
-    <link href="/assets/css/style.css" rel="stylesheet" type="text/css" media="all">
+    <link href="./assets/css/style.css" rel="stylesheet" type="text/css" media="all">
     
   </head>
   <body>
-    <div id="portfolio" class="w-full h-[100vh] bg-dark p-4 relative z-0">
-      <div class="container mx-auto flex flex-col justify-center items-center h-full">
-        <a href="/" class="text-white matrix text-6xl font-thin fade-in">{{ state.title }}</a>
-        <h1 class="text-white text-xl font-thin my-10 fade-in">{{ state.subtitle }}</h1>
+    <div id="portfolio" class="w-full h-screen bg-dark p-4 flex flex-col">
+
+      <div class="container flex flex-col md:flex-row p-4 mx-auto h-[90%]">
+
+        <div class="order-last md:order-first m-4 w-full md:w-3/4 h-full">
+
+            <!-- Main Body Shell -->
+          <div class="border-2 border-white h-full">
+            <div class="w-full h-full mx-auto px-2">
+            
+              <!-- Image HTML modal gallery: -->
+              <div class="flex flex-row flex-wrap min-h-[50%] pt-2">
+                <div v-for="(work, a) in state.work" :key="a" class="w-full h-auto md:w-1/2 lg:w-1/3">
+                  <div v-if="work.type === 'image'" class="cursor-pointer w-full h-auto ">
+                    <img :src="work.images[0]" class="cursor-pointer" :alt="work.title" @click="open_modal(work, a)">
+          
+                    
+                    <!-- Modal -->
+                    <div v-if="state.modal.open" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex flex-row justify-center items-center z-50 fade-in">
+                      
+                        <!-- Navigate Left/previous -->
+                        <div class="w-1/4 h-full flex flex-row justify-center items-center">
+                          <button v-if="state.modal.index > 0" @click="previous_work(work, a)" class="bg-primary
+                          _accent text-white px-2">Prev</button>
+                        </div>
+                      
+                      <div class="w-3/4 h-3/4 bg-white p-4 flex flex-col justify-start items-start">
+                        <div class="w-full flex flex-row">
+                          <div class="w-full h-full md:w-3/4 flex flex-col">
+                            <div class="h-[90%] w-full bg-zinc-200 overflow-hidden">
+                              <img :src="state.modal.target.focal_image" class="w-full h-full object-cover object-top" :alt="work.title">
+                            </div>
+                            <div v-if="state.modal.target.images.length > 1" class="w-full h-[120px] mt-2 flex flex-row flex-wrap">
+                              <div class="w-full md:w-1/4 h-[90%] me-2 overflow-hidden bg-zinc-200" v-for="(image, i) in state.modal.target.images" :key="i">
+                                <img :src="image" class="w-full cursor-pointer overflow-hidden" :alt="work.title" @click="state.modal.target.focal_image = image">
+                              </div>
+                            </div>
+                          </div>
+                          <div class="w-full md:w-1/4 flex flex-col">
+                            <div class="w-full flex flex-row items-center justify-end">
+                              <button @click="close_modal" class="bg-primary_accent text-white px-2">X</button>
+                            </div>
+                            <div class="px-3 pt-8 pb-10">
+                              <h1 class="text-neutral-900 text-2xl font-thin">{{ state.modal.target.title }} </h1>
+                              <p class="text-neutral-900 text-lg font-thin">{{ state.modal.target.description }}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <!-- Navigate Right/next -->
+                      <div class="w-1/4 h-full flex flex-row justify-center items-center">
+                        <button v-if="state.modal.index < (state.work.length - 1)" @click="next_work(work, a)" class="bg-primary
+                        _accent text-white px-2">Next</button>
+                        </div>  
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+
+        </div>
+
+          <!-- Nav Component-->
+        <div class="order-first md:order-last m-4 w-full md:w-1/4">
+          <div class="w-full flex flex-col justify-start items-start border-2 border-white pb-8">
+            <div class="p-4 flex flex-col justify-center items-start">
+              <a href="./index.html" class="text-white matrix text-6xl font-thin">{{ state.title }}</a>
+              <h1 class="text-white text-xl font-thin mt-4 mb-10">{{ state.subtitle }}</h1>
+            </div>
+            <div v-for="(link, a) in state.nav_links" :key="a"  class="w-full p-4 flex flex-row justify-start items-start">
+              <a :href="link.destination" class="text-white text-lg font-thin matrix hover-text-primary_accent cursor-pointer">{{ link.label }}</a>
+            </div>
+          </div>
+        </div>
+
       </div>
+
     </div> 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="./assets/js/tailwind.js"></script>
+    <script src="./assets/js/vue.js"></script>
     <script>
-      const { createApp, ref } = Vue
+      const { createApp, ref, nextTick, reactive } = Vue
       
       createApp({
         setup() {
           
           const message = ref('Using Vue.')
-          const state = ref({
+          const state = reactive({
             title: `ckuro`,
             subtitle: `Portfolio`,
-            links: [
-              { label: `Home`, destination: `/` }  
+            nav_links: [
+              { label: `Portfolio`, destination: `./portfolio.html` },
+              { label: `Music`, destination: `./music.html` },
+              { label: `Blog`, destination: `./blog.html` },
+              { label: `Shop`, destination: `./shop.html` },
+              { label: `Community`, destination: `./community.html` }
+            ], 
+            modal: {
+              open: false,
+              target: null,
+              index: 0
+            },
+            work: [
+              {
+                type: 'image',
+                title: 'Project 1',
+                description: 'Description of Project 1',
+                images: [
+                  'https://res.cloudinary.com/dgmz3uymj/image/upload/v1716926528/cld-sample-5.jpg'
+                ]
+              },
+              {
+                type: 'image',
+                title: 'Project 2',
+                description: 'Description of Project 2',
+                images: [
+                  'https://res.cloudinary.com/dgmz3uymj/image/upload/v1716926526/cld-sample-2.jpg'
+                ]
+              },
+              {
+                type: 'image',
+                title: 'Project 3',
+                description: 'Description of Project 3',
+                images: [
+                  'https://res.cloudinary.com/dgmz3uymj/image/upload/v1716926527/cld-sample-3.jpg'
+                ]
+              },
+              {
+                type: 'image',
+                title: 'Project 4',
+                description: 'Description of Project 4',
+                images: [
+                  'https://res.cloudinary.com/dgmz3uymj/image/upload/v1716926525/cld-sample.jpg',
+                  'https://res.cloudinary.com/dgmz3uymj/image/upload/t_Thumbnail/v1716926525/cld-sample.jpg',
+                  'https://res.cloudinary.com/dgmz3uymj/image/upload/v1716926524/samples/woman-on-a-football-field.jpg'
+                ]
+              }
             ]
           })
           
+          const open_modal = (work, a) => {
+            
+            state.modal.target = work
+            if(work.type === 'image') {
+              work['focal_image'] = work.images[0]
+            }
+            nextTick(() => {
+              state.modal.open = true
+              state.modal.index = a
+            })
+          }
+
+          const close_modal = () => {
+            state.modal.open = false
+            state.modal.target = null
+          }
+
+          const previous_work = (work, index) => {
+
+            if(index === 0) {
+              return
+            } else {
+
+              if(!state.modal.index) {
+                state.modal.index = index
+              }
+              
+              state.modal.index--
+              state.modal.target = state.work[state.modal.index]
+              if(state.modal.target.type === 'image') {
+                state.modal.target['focal_image'] = state.modal.target.images[0]
+              }
+              state.modal.comp++
+            }
+        
+          }
+
+          const next_work = (work, index) => {
+
+
+              state.modal.index++
+              if(state.modal.index === state.work.length) {
+                state.modal.index = 0
+              } 
+              state.modal.target = state.work[state.modal.index]
+              if(state.modal.target.type === 'image') {
+                state.modal.target['focal_image'] = state.modal.target.images[0]
+              }
+            
+        
+          }
           
           return {
             message,
-            state
+            state,
+            open_modal,
+            close_modal,
+            previous_work,
+            next_work
           }
         }
       }).mount('#portfolio')
