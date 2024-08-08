@@ -4,4 +4,4 @@ services:
     env: node
     plan: starter
     buildCommand: npm i && npm run build && npm run generate
-    startCommand: npx serve ./public
+    startCommand: node .output/server/index.mjs
