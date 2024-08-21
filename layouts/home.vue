@@ -2,55 +2,12 @@
   <div class="h-[100vh] w-full relative">
     <canvas id="c" class="w-full h-full absolute z-0"></canvas>
     <div class="w-full h-full absolute z-10 bg-black opacity-[0.5]"></div>
-    <div class="w-full absolute z-20 h-[80vh] mx-auto p-10">
-      <div class="container mx-auto py-10 ps-20 text-center">
-        <a
-          href="/"
-          class="text-white matrix text-6xl font-thin fade-in ms-[-15rem]"
-          >cKuro</a
-        >
-      </div>
-      <div class="main-ctr mx-auto h-full px-20 flex items-start justify-start">
-        <div class="w-full lg:w-[655px] h-full flex flex-col lg:flex-row me-5">
-          <div class="ctr-main h-full shadow-xl me-5 rounded-sm">
-            <slot />
-          </div>
-        </div>
-        <TemplateNav :links="state.nav_links" />
-      </div>
-    </div>
+    <slot />
   </div>
 </template>
 <script setup>
-// config/setup
-const config = useRuntimeConfig();
-import qs from "qs";
-
 // import onMounted:
-import { onMounted, reactive } from "vue";
-
-const state = reactive({
-  nav_links: [],
-});
-
-fetch(
-  `${config.public.NUXT_STRAPI_URL}/api/site-nav?${qs.stringify(
-    {
-      populate: ["links", "links.imagery"],
-    },
-    { arrayFormat: "comma" },
-  )}`,
-  {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  },
-).then(async (data) => {
-  const res = await data.json();
-  // console.log("fuuuuuuuuck", res.data);
-  state.nav_links = res.data.links;
-});
+import { onMounted } from "vue";
 
 onMounted(() => {
   // geting canvas by Boujjou Achraf. Thank you, Boujjou Achraf! https://codepen.io/wefiy/pen/WPpEwo
@@ -115,13 +72,5 @@ body {
 }
 canvas {
   display: block;
-}
-.ctr-main {
-  border: 1px solid #8d8484;
-  min-width: 655px;
-  max-width: 655px;
-}
-.main-ctr {
-  max-width: 1000px;
 }
 </style>

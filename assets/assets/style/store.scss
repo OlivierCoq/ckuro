@@ -1,0 +1,77 @@
+/* Main grid */
+
+.grid-product__title-inner,
+.grid-product__price-value {
+  color: white !important;
+}
+
+.grid-product__title-inner:hover,
+.grid-product__price-value:hover {
+  color: $primary_accent !important;
+  cursor: pointer !important;
+}
+
+/* Sorting */
+.grid-sort__item {
+  color: white !important;
+}
+
+.grid-sort__item:hover {
+  color: $primary_accent !important;
+  cursor: pointer !important;
+}
+
+/* Footer */
+
+.ec-footer__link {
+  color: white !important;
+}
+
+.ec-footer__link:hover {
+  color: $primary_accent !important;
+  cursor: pointer !important;
+}
+
+/* My Account */
+
+.ec-page-title {
+  color: white !important;
+}
+
+.breadcrumbs__link {
+  color: #ff6f6182 !important;
+}
+
+.breadcrumbs__link--last {
+  color: white !important;
+}
+
+.ec-header-h4 {
+  color: #ff6f6182 !important;
+}
+
+.ec-cart-step__block {
+  color: white !important;
+}
+
+.ec-cart-email__text {
+  color: white !important;
+}
+
+/* Cart */
+
+.ec-cart--empty {
+  color: white !important;
+}
+
+/* Product */
+
+.product-details__product-title {
+  color: #ff6f6182 !important;
+}
+
+.product-details__sidebar,
+.form-control__inline-label,
+.details-product-price__value {
+  color: white !important;
+}

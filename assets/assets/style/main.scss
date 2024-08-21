@@ -1,0 +1,76 @@
+/* Tailwind */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "variables.scss";
+@import "store.scss";
+@import "blog.scss";
+
+/* Backgound */
+.bg-dark {
+  background-color: $dark_bg;
+}
+.bg-primary_accent {
+  background-color: $primary_accent;
+}
+.bg-secondary_accent {
+  background-color: $secondary_accent;
+}
+.bg-highlight {
+  background-color: $highlight;
+}
+.bg-additional_accent {
+  background-color: $additional_accent;
+}
+
+/* Fonts */
+@font-face {
+  font-family: "Matrix";
+  src: URL("https://res.cloudinary.com/dgmz3uymj/raw/upload/v1724207888/Matrix-MZ4P_p5qbq5.ttf")
+    format("truetype");
+}
+.matrix {
+  font-family: "Matrix";
+}
+
+.text-primary_accent {
+  color: $primary_accent;
+}
+.hover-text-primary_accent:hover {
+  color: $primary_accent;
+}
+
+.text-secondary_accent {
+  color: $secondary_accent;
+}
+.hover-text-secondary_accent:hover {
+  color: $secondary_accent;
+}
+
+.text-highlight {
+  color: $highlight;
+}
+.hover-text-highlight:hover {
+  color: $highlight;
+}
+
+.text-additional_accent {
+  color: $additional_accent;
+}
+.hover-text-additional_accent:hover {
+  color: $additional_accent;
+}
+
+/*Effects*/
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 1.4s forwards;
+}

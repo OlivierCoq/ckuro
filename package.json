@@ -13,6 +13,8 @@
     "@pinia/nuxt": "^0.5.3",
     "nuxt": "^3.12.4",
     "pinia": "^2.2.1",
+    "qs": "^6.13.0",
+    "uuid": "^10.0.0",
     "vue": "latest"
   },
   "devDependencies": {
