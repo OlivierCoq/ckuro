@@ -3,5 +3,5 @@ services:
     name: cKuro Frontend
     env: node
     plan: starter
-    buildCommand: npm install && npm run build
+    buildCommand: npm install --legacy-peer-deps && npm run build
     startCommand: node .output/server/index.mjs

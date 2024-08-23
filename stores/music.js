@@ -4,7 +4,7 @@ import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
-const api_url = 'http://localhost:1337'
+const api_url = 'https://strapi-potr.onrender.com'
 import qs from "qs";
 
 export const useMusicStore = defineStore({
