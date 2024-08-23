@@ -3,13 +3,19 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
   ssr: true,
   devtools: { enabled: false },
-  css: ["~/assets/assets/style/main.scss"],
-  modules: [],
+  css: [
+    "~/assets/assets/style/main.scss",
+    "@fortawesome/fontawesome-svg-core/styles.css",
+  ],
   postcss: {
     plugins: {
       tailwindcss: {},
       autoprefixer: {},
     },
+  },
+  modules: ["@pinia/nuxt", "@pinia-plugin-persistedstate/nuxt"],
+  pinia: {
+    autoImports: ["defineStore", ["defineStore", "definePiniaStore"]],
   },
   runtimeConfig: {
     public: {

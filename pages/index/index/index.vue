@@ -4,7 +4,7 @@
   >
     <a
       href="/"
-      class="text-white matrix text-6xl font-thin fade-in text-center"
+      class="text-white matrix text-6xl font-thin fade-in text-center neon-flicker"
       >{{ state.title }}</a
     >
     <div

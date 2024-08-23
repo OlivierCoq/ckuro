@@ -6,7 +6,7 @@
       <div class="container mx-auto py-10 ps-20 text-center">
         <a
           href="/"
-          class="text-white matrix text-6xl font-thin fade-in ms-[-15rem]"
+          class="text-white matrix neon-flicker text-6xl font-thin fade-in ms-[-15rem]"
           >cKuro</a
         >
       </div>
