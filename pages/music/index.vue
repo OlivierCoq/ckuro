@@ -22,6 +22,8 @@
                   class="w-full h-full bg-transparent text-white font-thin search"
                   placeholder="Search for music..."
                   v-model="musicStore.search.query"
+                  @keydown="musicStore.doSearch"
+                  @keydown.backspace="musicStore.clearSearch"
                 />
               </div>
               <button
@@ -41,8 +43,48 @@
             >
               <!-- Filters: -->
               <div
-                class="w-full h-[40px] flex flex-row justify-start items-center align-center"
-              ></div>
+                class="w-full min-h-[40px] flex flex-col justify-start items-start align-start"
+              >
+                <div
+                  v-if="musicStore.interface"
+                  class="w-full flex flex-wrap justify-start items-start align-start px-4 mb-4"
+                >
+                  <p class="text-white font-bold me-3">genres:</p>
+                  <div
+                    v-for="(genre, index) in musicStore.interface.data.genres"
+                    :key="index"
+                    class="filter-box h-[40px] px-2 py-1 bg-zinc-700 hover:bg-zinc-800 cursor-pointer rounded-md me-2 flex flex-col justify-center items-center"
+                    :class="genre.active ? 'bg-zinc-800' : 'bg-zinc-700'"
+                    @click="musicStore.doFilter(genre)"
+                  >
+                    <p class="text-white font-thin">{{ genre.label }}</p>
+                  </div>
+                </div>
+                <div
+                  v-if="musicStore.interface"
+                  class="w-full flex flex-wrap justify-start items-start align-start px-4 mb-4"
+                >
+                  <p class="text-white font-bold me-2">artists:</p>
+                  <div
+                    v-for="(artist, index) in musicStore.interface.data.artists"
+                    :key="index"
+                    class="filter-box h-[40px] px-2 py-1 bg-zinc-700 hover:bg-zinc-800 cursor-pointer rounded-md me-2 flex flex-col justify-center items-center"
+                    :class="{ 'bg-zinc-800': artist.active }"
+                    @click="musicStore.doFilter(artist)"
+                  >
+                    <p class="text-white font-thin">{{ artist.label }}</p>
+                  </div>
+                </div>
+                <!-- clear  -->
+                <div
+                  v-if="musicStore.search.filters.length > 0"
+                  class="filter-box h-[30px] px-2 py-1 cursor-pointer rounded-md me-2 flex flex-row justify-center items-center ms-2"
+                  @click="musicStore.clearFilters"
+                >
+                  <p class="text-white font-thin me-2">clear</p>
+                  <font-awesome-icon :icon="['fas', 'times']" color="#8d8484" />
+                </div>
+              </div>
               <!-- Headers -->
               <div
                 class="w-full h-[40px] flex flex-row justify-start items-center align-center mx-4 py-4"
@@ -54,9 +96,9 @@
                   <!-- <font-awesome-icon :icon="['fas', 'clock']" color="#8d8484" /> -->
                 </div>
               </div>
-              <div class="w-[95%] mx-auto">
+              <div v-if="musicStore.search.results" class="w-[95%] mx-auto">
                 <TrackBox
-                  v-for="(track, index) in musicStore.tracks.data"
+                  v-for="(track, index) in musicStore.search.results"
                   :key="index"
                   :track="track"
                   :index="index"
@@ -207,10 +249,6 @@ musicStore.init_music();
 // State
 const state = reactive({
   nav_links: [],
-});
-
-onMounted(() => {
-  musicStore.reset();
 });
 
 fetch(

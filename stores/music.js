@@ -4,7 +4,8 @@ import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
-const api_url = 'https://strapi-potr.onrender.com'
+// const api_url = 'https://strapi-potr.onrender.com'
+const api_url = 'http://localhost:1337'
 import qs from "qs";
 
 export const useMusicStore = defineStore({
@@ -13,10 +14,12 @@ export const useMusicStore = defineStore({
     return {
       search: {
         query: "",
-        results: null,
+        results: [],
+        filters: [],
         loading: false,
         error: null
       },
+      interface: null,
       filters: [],
       active_filters: [],
       filter_key: 0,
@@ -44,6 +47,7 @@ export const useMusicStore = defineStore({
       await this.fetch_albums()
       await this.fetch_artists()
       await this.fetch_tracks()
+      await this.fetch_interface()
     },
     async fetch_albums() {
       this.albums = await fetch(`${api_url}/api/albums?${qs.stringify(
@@ -88,6 +92,7 @@ export const useMusicStore = defineStore({
       .catch(err => console.error(err))
     },
     async fetch_tracks() {
+      console.log('fetching tracks...')
       this.tracks = await fetch(`${api_url}/api/tracks?${qs.stringify(
         {
           populate: [
@@ -97,6 +102,7 @@ export const useMusicStore = defineStore({
             "albums",
             "single_cover",
             "music_artists",
+            "genres",
             "ratings",
             "ratings.one_star",
             "ratings.two_stars",
@@ -109,9 +115,22 @@ export const useMusicStore = defineStore({
       )}`)
         .then(res => res.json())
       .catch(err => console.error(err))
+      nextTick(()=> {
+        this.search.results = this.tracks.data
+      })
+    },
+    async fetch_interface() {
+      this.interface = await fetch(`${api_url}/api/music-interface?${qs.stringify({
+        populate: [
+          "genres",
+          "artists"
+        ]
+      })}`)
+        .then(res => res.json())
+      .catch(err => console.error(err))
     },
     reset() {
-      this.results = this.tracks
+      // this.results = this.tracks
     },
     // Interface methods:
     scrub(e) {
@@ -208,6 +227,7 @@ export const useMusicStore = defineStore({
         // console.log('selecting next track', next)
         this.player.track = this.this.results[next] ? this.this.results[next] : target
         const audio_player = document.getElementById('audio_player')
+        audio_player.volume = this.player.volume
         // reset_scrubber()
         nextTick(() => { this.fire_play() })
       })
@@ -225,17 +245,46 @@ export const useMusicStore = defineStore({
       this.player.volume = volume
     },
     doSearch() {
-      if((this.search.query === '') || (this.search.query.length < 2)) { this.results = this.tracks }
+      if((!this.search.query.length) || (this.search.query.length < 2)) { this.clearSearch() }
       else {
-        this.results = this.tracks.data.filter((track) => {
+        this.search.results = this.tracks.data.filter((track) => {
           return track.title.toLowerCase().includes(this.search.query.toLowerCase())
         })
       }
+    },
+    clearSearch() {
+      this.search.results = this.tracks.data
+    },
+    doFilter(filter) {
+      console.log('filtering by', filter)
+      this.search.results = []
+
+      this.tracks.data.forEach((track) => {
+
+        if(track.genres.some((genre) => genre.label.toLowerCase() === filter.label.toLowerCase())){
+          this.search.results.push(track)
+          this.search.filters.push(filter)
+          filter.active = true
+        }
+        // artists:
+        if(track.music_artists.some((artist) => artist.name.toLowerCase() === filter.label.toLowerCase())) {
+          this.search.results.push(track)
+          this.search.filters.push(filter)
+          filter.active = true
+        }
+      })
+
+    },
+    clearFilters() {
+      this.search.results = this.tracks.data
+      this.search.filters.forEach((filter) => { filter.active = false })
+      nextTick(() => { this.search.filters = [] })
     },
     // Legacy methods:
     fire_play() {
       const audio_player = document.getElementById('audio_player')
         nextTick(() => {
+          audio_player.volume = this.player.volume
           audio_player.play()
           this.player.playing = true
           this.update_tracktime()
