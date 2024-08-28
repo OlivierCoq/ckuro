@@ -214,18 +214,18 @@ export const useMusicStore = defineStore({
       this.player.track = false
       nextTick(()=> {
         // console.log('selecting previous track', prev)
-        this.player.track = this.this.results[prev] ? this.this.results[prev] : target
+        this.player.track = this.search.results[prev] ? this.search.results[prev] : target
         const audio_player = document.getElementById('audio_player')
         // reset_scrubber()
         nextTick(() => { this.fire_play() })
       })
     },
     select_next() {
-      const target = this.player.track, next = this.this.results.indexOf(target) + 1
+      const target = this.player.track, next = this.search.results.indexOf(target) + 1
       this.player.track = false
       nextTick(()=> {
         // console.log('selecting next track', next)
-        this.player.track = this.this.results[next] ? this.this.results[next] : target
+        this.player.track = this.search.results[next] ? this.search.results[next] : target
         const audio_player = document.getElementById('audio_player')
         audio_player.volume = this.player.volume
         // reset_scrubber()
