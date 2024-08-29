@@ -83,6 +83,11 @@ export const useMusicStore = defineStore({
             "socials.platform",
             "socials.link",
             "albums",
+            "albums.title",
+            "albums.artwork",
+            "albums.release_date",
+            "albums.music_artists",
+            "albums.ratings",
             "tracks"
           ],
         },

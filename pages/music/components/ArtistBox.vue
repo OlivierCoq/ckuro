@@ -70,6 +70,37 @@
           </a>
         </div>
       </div>
+      <div class="container mx-auto p-4 flex flex-col mt-20">
+        <h3 class="text-white text-4xl font-bold matrix mb-5">Albums</h3>
+        <div class="flex flex-col lg:flex-row full">
+          <div class="flex flex-wrap w-1/2">
+            <div
+              v-for="release in props.artist.albums"
+              :key="release.id"
+              class="w-[150px] h-[150px] bg-cover no-repeat shadow-xl me-4 mb-4"
+              :style="`background-image: url(${release.artwork[0]?.url})`"
+              @click="state.modal.focus_album = release"
+            ></div>
+          </div>
+          <!-- details -->
+          <div class="flex flex-col w-full lg:w-1/2">
+            <div
+              v-if="state.modal.focus_album"
+              class="w-full h-[150px] bg-cover no-repeat shadow-xl mb-4"
+              :style="`background-image: url(${state.modal.focus_album.artwork[0]?.url})`"
+            ></div>
+            <div
+              v-if="state.modal.focus_album"
+              class="flex flex-col justify-center items-start"
+            >
+              <h3 class="text-white">{{ state.modal.focus_album.title }}</h3>
+              <!-- <p class="text-white">
+                {{ state.modal.focus_album.description }}
+              </p> -->
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -84,6 +115,7 @@ const props = defineProps({
 const state = reactive({
   modal: {
     open: false,
+    focus_album: null,
   },
 });
 </script>
