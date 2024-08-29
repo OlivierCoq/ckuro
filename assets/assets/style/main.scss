@@ -25,6 +25,54 @@
   background-color: $additional_accent;
 }
 
+.hover-bg-primary_accent {
+  &:hover {
+    background-color: $primary_accent;
+  }
+}
+
+.hover-bg-secondary_accent {
+  &:hover {
+    background-color: $secondary_accent;
+  }
+}
+
+.hover-bg-highlight {
+  &:hover {
+    background-color: $highlight;
+  }
+}
+
+.hover-bg-additional_accent {
+  &:hover {
+    background-color: $additional_accent;
+  }
+}
+
+.hover-text-primary_accent {
+  &:hover {
+    color: $additional_accent;
+  }
+}
+
+.hover-text-secondary_accent {
+  &:hover {
+    color: $additional_accent;
+  }
+}
+
+.hover-text-highlight {
+  &:hover {
+    color: $additional_accent;
+  }
+}
+
+.hover-text-additional_accent {
+  &:hover {
+    color: $additional_accent;
+  }
+}
+
 /* Fonts */
 @font-face {
   font-family: "Matrix";

@@ -10,13 +10,19 @@
           >cKuro</a
         >
       </div>
-      <div class="main-ctr mx-auto h-full px-20 flex items-start justify-start">
-        <div class="w-full lg:w-[655px] h-full flex flex-col lg:flex-row me-5">
+      <div
+        class="main-ctr mx-auto h-full px-20 flex flex-col lg:flex-row items-start justify-start"
+      >
+        <div
+          class="w-full lg:w-[655px] h-full flex flex-col lg:flex-row me-5 mb-5"
+        >
           <div class="ctr-main h-full shadow-xl me-5 rounded-sm">
             <slot />
           </div>
         </div>
-        <TemplateNav :links="state.nav_links" />
+        <div class="w-full lg:w-1/4 order-first lg:order-last">
+          <TemplateNav :links="state.nav_links" />
+        </div>
       </div>
     </div>
   </div>

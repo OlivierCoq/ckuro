@@ -1,9 +1,9 @@
 <template>
   <div
     id="site_nav"
-    class="w-full lg:w-1/4 flex flex-row items-start justify-start align-start rounded-sm shadow-xl"
+    class="w-full mb-5 flex flex-row items-start justify-start align-start rounded-sm shadow-xl"
   >
-    <div class="w-3/4 p-4 flex flex-col">
+    <div class="w-full p-4 flex flex-col">
       <div v-for="(item, a) in props.links" :key="a" class="flex flex-row">
         <div class="w-1/3 p-4">
           <a
