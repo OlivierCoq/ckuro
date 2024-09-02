@@ -28,11 +28,17 @@
     <div class="w-[40%] text-gray-100 font-thin">
       <span>{{ props.track.title }}</span>
     </div>
-    <div class="w-[40%] text-gray-100 font-thin">
+    <div class="w-[25%] text-gray-100 font-thin">
       <span v-for="artist in props.track.music_artists" :key="artist.id">
         {{ artist.name }}
       </span>
     </div>
+    <div class="w-[25%] font-thin">
+      <RatingSystem :track="props.track" />
+    </div>
+    <!-- <div class="w-[15%] text-gray-100 font-thin">
+      <span>{{ props.track.duration }}</span>
+    </div> -->
   </div>
 </template>
 <script setup>
@@ -48,6 +54,8 @@ const props = defineProps({
 });
 
 const musicStore = useMusicStore();
+
+import RatingSystem from "./RatingSystem.vue";
 
 const state = reactive({
   init: false,

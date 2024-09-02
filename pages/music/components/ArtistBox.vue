@@ -94,6 +94,10 @@
               class="flex flex-col justify-center items-start"
             >
               <h3 class="text-white">{{ state.modal.focus_album.title }}</h3>
+              <p class="text-white">
+                <strong>Released:</strong>
+                {{ state.modal.focus_album.release_date }}
+              </p>
               <!-- <p class="text-white">
                 {{ state.modal.focus_album.description }}
               </p> -->

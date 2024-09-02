@@ -93,10 +93,13 @@
               >
                 <div class="w-[10%] text-gray-400 font-thin ps-4"></div>
                 <div class="w-[40%] text-gray-400 font-thin">Title</div>
-                <div class="w-[40%] text-gray-400 font-thin">Artist</div>
-                <div class="w-[10%] text-gray-400 font-thin">
+                <div class="w-[25%] text-gray-400 font-thin">Artist</div>
+                <div class="w-[25%] text-gray-400 font-thin">
                   <font-awesome-icon :icon="['fas', 'star']" color="#8d8484" />
                 </div>
+                <!-- <div class="w-[15%] text-gray-400 font-thin">
+                  <font-awesome-icon :icon="['fas', 'clock']" color="#8d8484" />
+                </div> -->
               </div>
               <div
                 v-if="musicStore.search.results"
