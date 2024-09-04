@@ -124,7 +124,7 @@
       <div
         class="w-full h-full order-first lg:order-last flex flex-col justify-between"
       >
-        <div class="h-[30%]">
+        <div>
           <TemplateNav :links="state.nav_links" />
         </div>
         <!-- Artists here -->

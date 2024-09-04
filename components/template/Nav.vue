@@ -9,6 +9,7 @@
           <a
             :href="item.link"
             class="text-white text-xl font-thin matrix hover-text-primary_accent cursor-pointer uppercase"
+            :class="{ 'text-primary_accent': route.path === item.link }"
             >{{ item.label }}</a
           >
         </div>
@@ -24,6 +25,8 @@ const props = defineProps({
     required: true,
   },
 });
+
+const route = useRoute();
 </script>
 <style lang="scss">
 #site_nav {

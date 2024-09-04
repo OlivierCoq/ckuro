@@ -31,6 +31,20 @@ export default defineNuxtConfig({
           href: "https://res.cloudinary.com/dgmz3uymj/raw/upload/v1725422153/site_12707fde25.webmanifest",
         },
       ],
+      script: [
+        {
+          src: "https://app.ecwid.com/script.js?104674311&data_platform=code&data_date=2024-06-08",
+          dataCfasync: false,
+        },
+        {
+          src: "https://app.ecwid.com/script.js?104674311&data_platform=code&data_date=2024-08-07",
+          dataCfasync: false,
+        },
+        {
+          src: "https://app.ecwid.com/script.js?104674311&data_platform=code&data_date=2024-08-07",
+          dataCfasync: false,
+        },
+      ],
     },
   },
   css: [
