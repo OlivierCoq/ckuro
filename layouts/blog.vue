@@ -102,6 +102,13 @@ canvas {
 }
 .ctr-main {
   border: 1px solid #8d8484;
+  min-width: 655px;
+  max-width: 655px;
+  // screens below 655px:
+  @media (max-width: 655px) {
+    min-width: 100%;
+    max-width: 100%;
+  }
 }
 .main-ctr {
   max-width: 1000px;
