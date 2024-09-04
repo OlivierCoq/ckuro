@@ -102,8 +102,6 @@ canvas {
 }
 .ctr-main {
   border: 1px solid #8d8484;
-  min-width: 655px;
-  max-width: 655px;
 }
 .main-ctr {
   max-width: 1000px;

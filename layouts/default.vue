@@ -11,7 +11,7 @@
         >
       </div>
       <div
-        class="main-ctr mx-auto h-full px-20 flex flex-col lg:flex-row items-start justify-start"
+        class="main-ctr mx-auto h-full lg:px-20 flex flex-col lg:flex-row items-start justify-start"
       >
         <div
           class="w-full lg:w-[655px] h-full flex flex-col lg:flex-row me-5 mb-5"
@@ -126,6 +126,11 @@ canvas {
   border: 1px solid #8d8484;
   min-width: 655px;
   max-width: 655px;
+  // screens below 655px:
+  @media (max-width: 655px) {
+    min-width: 100%;
+    max-width: 100%;
+  }
 }
 .main-ctr {
   max-width: 1000px;

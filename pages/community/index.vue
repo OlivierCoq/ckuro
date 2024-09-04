@@ -1,6 +1,6 @@
 <template>
   <div class="w-full absolute z-20 h-[80vh] mx-auto p-10">
-    <div class="container mx-auto py-10 ps-20 text-center">
+    <div class="container mx-auto py-10 lg:ps-20 text-center">
       <a
         href="/"
         class="text-white neon-flicker matrix text-6xl font-thin fade-in ms-[-15rem]"
@@ -8,7 +8,7 @@
       >
     </div>
     <div
-      class="main-ctr mx-auto h-full lg:px-20 flex flex-col lg:flex-row items-start justify-start"
+      class="main-ctr mx-auto w-full h-full lg:px-20 flex flex-col lg:flex-row items-start justify-start"
     >
       <div class="w-full lg:w-[655px] h-full flex flex-col lg:flex-row me-5">
         <div class="ctr-main h-full shadow-xl me-5">

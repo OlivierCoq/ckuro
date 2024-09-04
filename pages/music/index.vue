@@ -122,7 +122,7 @@
         </div>
       </div>
       <div
-        class="w-full h-full order-first lg:order-last flex flex-col justify-between"
+        class="w-full h-full order-first lg:order-last flex flex-col justify-between mb-4"
       >
         <div>
           <TemplateNav />
