@@ -33,24 +33,24 @@
           >
             <font-awesome-icon
               :icon="['fas', 'backward-step']"
-              class="mx-3 cursor-pointer text-xl"
+              class="mx-3 cursor-pointer text-lg"
               @click="musicStore.select_previous"
             />
             <font-awesome-icon
               v-if="!musicStore.player.playing"
               :icon="['fas', 'play']"
-              class="mx-3 cursor-pointer text-xl"
+              class="mx-3 cursor-pointer text-3xl"
               @click="musicStore.play(musicStore.player.track)"
             />
             <font-awesome-icon
               v-else
               :icon="['fas', 'pause']"
-              class="mx-3 cursor-pointer text-xl"
+              class="mx-3 cursor-pointer text-3xl"
               @click="musicStore.pause(musicStore.player.track)"
             />
             <font-awesome-icon
               :icon="['fas', 'forward-step']"
-              class="mx-3 cursor-pointer text-xl"
+              class="mx-3 cursor-pointer text-lg"
               @click="musicStore.select_next"
             />
           </div>

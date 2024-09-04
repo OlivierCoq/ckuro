@@ -1,11 +1,33 @@
 <template>
   <div
+    v-if="!state.rated"
     class="w-full flex flex-row justify-start items-center align-center text-xs"
   >
     <font-awesome-icon
       v-for="i in 5"
-      class="me-2 cursor-pointer hover:text-yellow-500"
-      :icon="['far', 'star']"
+      class="me-2 cursor-pointer hover:text-yellow-400"
+      :class="[
+        {
+          'text-yellow-400': i <= state.selected_rating,
+          'text-gray-400': i > state.selected_rating,
+          'text-yellow-400': i <= state.average,
+        },
+      ]"
+      :icon="[`${i <= state.selected_rating ? 'fas' : 'far'}`, 'star']"
+      :color="'#8d8484'"
+      :key="i"
+      @click="select_rating(i)"
+    />
+  </div>
+  <div
+    v-else
+    class="w-full flex flex-row justify-start items-center align-center text-xs"
+  >
+    <font-awesome-icon
+      v-for="i in 5"
+      class="me-2 cursor-pointer hover:text-yellow-400"
+      :class="i <= state.rating ? 'text-yellow-400' : 'text-gray-400'"
+      :icon="[`${i <= state.selected_rating ? 'fas' : 'far'}`, 'star']"
       :color="'#8d8484'"
       :key="i"
       @click="select_rating(i)"
@@ -25,36 +47,46 @@ const props = defineProps({
 
 const state = reactive({
   stars: {
-    1: props.track.ratings.one_star,
-    2: props.track.ratings.two_stars,
-    3: props.track.ratings.three_stars,
-    4: props.track.ratings.four_stars,
-    5: props.track.ratings.five_stars,
+    one_star: props.track.ratings.one_star,
+    two_stars: props.track.ratings.two_stars,
+    three_stars: props.track.ratings.three_stars,
+    four_stars: props.track.ratings.four_stars,
+    five_stars: props.track.ratings.five_stars,
   },
   selected_rating: 0,
   rated: false,
   rating: 0,
   average: props.track.ratings.average_rating,
-  total: 0,
+  sum_of_ratings: 0,
   num_votes: props.track.ratings.num_votes,
 });
 
-const calculate_average = () => {
-  for (let i = 1; i <= 5; i++) {
-    state.total += state.stars[i] * i;
-  }
-  nextTick(() => {
-    state.average = state.total / props.track.ratings.total;
-  });
-};
-
-const calculate_total = () => {
-  state.stars.total =
+const num_of_ratings = () => {
+  state.num_votes =
     state.stars.one_star +
     state.stars.two_stars +
     state.stars.three_stars +
     state.stars.four_stars +
     state.stars.five_stars;
+
+  return state.num_votes;
+};
+
+const sum_of_ratings = () => {
+  state.sum_of_ratings =
+    state.stars.one_star +
+    state.stars.two_stars * 2 +
+    state.stars.three_stars * 3 +
+    state.stars.four_stars * 4 +
+    state.stars.five_stars * 5;
+
+  return state.sum_of_ratings;
+};
+
+const calculate_average = () => {
+  // Average Rating = (Sum of Ratings) / (Number of Ratings)
+  state.average = sum_of_ratings() / num_of_ratings();
+  console.log("calculating average: ", state.average);
 };
 
 onMounted(() => {

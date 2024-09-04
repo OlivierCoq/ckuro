@@ -281,6 +281,7 @@ export const useMusicStore = defineStore({
 
     },
     clearFilters() {
+      console.log('clearing filters')
       this.search.results = this.tracks.data
       this.search.filters.forEach((filter) => { filter.active = false })
       nextTick(() => { this.search.filters = [] })

@@ -56,7 +56,7 @@
                     v-for="(genre, index) in musicStore.interface.data.genres"
                     :key="index"
                     class="filter-box h-[40px] px-2 py-1 bg-zinc-700 hover:bg-zinc-800 cursor-pointer rounded-md me-2 flex flex-col justify-center items-center"
-                    :class="genre.active ? 'bg-zinc-800' : 'bg-zinc-700'"
+                    :class="{ 'bg-primary_accent': genre.active }"
                     @click="musicStore.doFilter(genre)"
                   >
                     <p class="text-white font-thin">{{ genre.label }}</p>
@@ -71,7 +71,7 @@
                     v-for="(artist, index) in musicStore.interface.data.artists"
                     :key="index"
                     class="filter-box h-[40px] px-2 py-1 bg-zinc-700 hover:bg-zinc-800 cursor-pointer rounded-md me-2 flex flex-col justify-center items-center"
-                    :class="{ 'bg-zinc-800': artist.active }"
+                    :class="{ 'bg-primary_accent': artist.active }"
                     @click="musicStore.doFilter(artist)"
                   >
                     <p class="text-white font-thin">{{ artist.label }}</p>
@@ -80,7 +80,7 @@
                 <!-- clear  -->
                 <div
                   v-if="musicStore.search.filters.length > 0"
-                  class="filter-box h-[30px] px-2 py-1 cursor-pointer rounded-md me-2 flex flex-row justify-center items-center ms-2"
+                  class="filter-box h-[30px] px-2 py-1 cursor-pointer rounded-md me-2 flex flex-row justify-center items-center ms-2 z-20"
                   @click="musicStore.clearFilters"
                 >
                   <p class="text-white font-thin me-2">clear</p>
@@ -114,7 +114,7 @@
                 <font-awesome-icon
                   v-if="musicStore.search?.results?.length > 12"
                   :icon="['fas', 'arrow-down']"
-                  class="mx-3 cursor-pointer text-xl text-white sticky z-20 bottom-0 left-[95%] right-0"
+                  class="mx-3 text-xl text-white sticky z-20 bottom-0 left-[95%] right-0"
                 />
               </div>
             </div>
