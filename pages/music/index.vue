@@ -125,7 +125,7 @@
         class="w-full h-full order-first lg:order-last flex flex-col justify-between"
       >
         <div>
-          <TemplateNav :links="state.nav_links" />
+          <TemplateNav />
         </div>
         <!-- Artists here -->
         <div
@@ -154,10 +154,6 @@
   <MusicPlayer v-if="musicStore.player.track" />
 </template>
 <script setup>
-// config/setup
-const config = useRuntimeConfig();
-import qs from "qs";
-
 // Meta
 definePageMeta({
   title: "cKuro - Music",
@@ -174,30 +170,6 @@ import MusicPlayer from "./components/MusicPlayer.vue";
 const musicStore = useMusicStore();
 // Init music:
 musicStore.init_music();
-
-// State
-const state = reactive({
-  nav_links: [],
-});
-
-fetch(
-  `${config.public.NUXT_STRAPI_URL}/api/site-nav?${qs.stringify(
-    {
-      populate: ["links", "links.imagery"],
-    },
-    { arrayFormat: "comma" },
-  )}`,
-  {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  },
-).then(async (data) => {
-  const res = await data.json();
-  // console.log("fuuuuuuuuck", res.data);
-  state.nav_links = res.data.links;
-});
 </script>
 <style lang="scss">
 .border-thin {

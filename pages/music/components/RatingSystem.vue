@@ -86,7 +86,7 @@ const sum_of_ratings = () => {
 const calculate_average = () => {
   // Average Rating = (Sum of Ratings) / (Number of Ratings)
   state.average = sum_of_ratings() / num_of_ratings();
-  console.log("calculating average: ", state.average);
+  // console.log("calculating average: ", state.average);
   return state.average;
 };
 
@@ -95,7 +95,7 @@ onMounted(() => {
 });
 
 const select_rating = (rating) => {
-  console.log("rating: ", rating);
+  // console.log("rating: ", rating);
 
   state.selected_rating = rating;
   state.rated = true;
