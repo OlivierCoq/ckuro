@@ -87,6 +87,7 @@ const calculate_average = () => {
   // Average Rating = (Sum of Ratings) / (Number of Ratings)
   state.average = sum_of_ratings() / num_of_ratings();
   console.log("calculating average: ", state.average);
+  return state.average;
 };
 
 onMounted(() => {
@@ -123,7 +124,7 @@ const select_rating = (rating) => {
           five_stars:
             rating === 5 ? state.stars.five_stars + 1 : state.stars.five_stars,
           total: props.track.ratings.total + 1,
-          average_rating: state.average,
+          average_rating: calculate_average(),
           num_votes: props.track.ratings.num_votes + 1,
         },
       },
