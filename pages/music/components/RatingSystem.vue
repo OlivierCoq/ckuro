@@ -110,11 +110,18 @@ const select_rating = (rating) => {
     body: JSON.stringify({
       data: {
         ratings: {
-          one_star: rating === 1 ? state.stars[1] + 1 : state.stars[1],
-          two_stars: rating === 2 ? state.stars[2] + 1 : state.stars[2],
-          three_stars: rating === 3 ? state.stars[3] + 1 : state.stars[3],
-          four_stars: rating === 4 ? state.stars[4] + 1 : state.stars[4],
-          five_stars: rating === 5 ? state.stars[5] + 1 : state.stars[5],
+          one_star:
+            rating === 1 ? state.stars.one_star + 1 : state.stars.one_star,
+          two_stars:
+            rating === 2 ? state.stars.two_stars + 1 : state.stars.two_stars,
+          three_stars:
+            rating === 3
+              ? state.stars.three_stars + 1
+              : state.stars.three_stars,
+          four_stars:
+            rating === 4 ? state.stars.four_stars + 1 : state.stars.four_stars,
+          five_stars:
+            rating === 5 ? state.stars.five_stars + 1 : state.stars.five_stars,
           total: props.track.ratings.total + 1,
           average_rating: state.average,
           num_votes: props.track.ratings.num_votes + 1,
