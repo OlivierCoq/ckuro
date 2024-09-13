@@ -17,6 +17,7 @@
       :color="'#8d8484'"
       :key="i"
       @click="select_rating(i)"
+      @mouseover="star_hover(i)"
     />
   </div>
   <div
@@ -59,6 +60,7 @@ const state = reactive({
   average: props.track.ratings.average_rating,
   sum_of_ratings: 0,
   num_votes: props.track.ratings.num_votes,
+  hover: 0,
 });
 
 const num_of_ratings = () => {
@@ -89,6 +91,8 @@ const calculate_average = () => {
   // console.log("calculating average: ", state.average);
   return state.average;
 };
+
+const star_hover = (rating) => {};
 
 onMounted(() => {
   calculate_average();

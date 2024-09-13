@@ -41,7 +41,7 @@
 
             <!-- Music list -->
             <div
-              class="w-full h-full flex flex-col justify-start items-start align-start"
+              class="w-full h-full flex flex-col justify-start items-start align-start overflow-hidden"
             >
               <!-- Filters: -->
               <div
