@@ -249,8 +249,9 @@ export const useMusicStore = defineStore({
       audio_player.volume = volume
       this.player.volume = volume
     },
-    doSearch() {
-      if((!this.search.query.length) || (this.search.query.length < 2)) { this.clearSearch() }
+    doSearch(e) {
+      if(e.keyCode === 17) { return }
+      if(!this.search.query.length) { this.clearSearch() }
       else {
         this.search.results = this.tracks.data.filter((track) => {
           return track.title.toLowerCase().includes(this.search.query.toLowerCase())
@@ -259,25 +260,28 @@ export const useMusicStore = defineStore({
     },
     clearSearch() {
       this.search.results = this.tracks.data
+      this.search.query = ''
     },
     doFilter(filter) {
       console.log('filtering by', filter)
-      this.search.results = []
+      this.search.filters.push(filter)
 
-      this.tracks.data.forEach((track) => {
+      if (filter.type === 'genre') {
 
-        if(track.genres.some((genre) => genre.label.toLowerCase() === filter.label.toLowerCase())){
-          this.search.results.push(track)
+        this.search.results = this.search.results.filter((track) => {
           this.search.filters.push(filter)
           filter.active = true
-        }
-        // artists:
-        if(track.music_artists.some((artist) => artist.name.toLowerCase() === filter.label.toLowerCase())) {
-          this.search.results.push(track)
+          return track.genres.some((genre) => genre.label.toLowerCase() === filter.label.toLowerCase())
+        })
+      }
+
+      if (filter.type === 'music_artist') {
+        this.search.results = this.search.results.filter((track) => {
           this.search.filters.push(filter)
           filter.active = true
-        }
-      })
+          return track.music_artists.some((artist) => artist.name.toLowerCase() === filter.label.toLowerCase())
+        })
+      }
 
     },
     clearFilters() {

@@ -25,10 +25,11 @@
                   placeholder="Search for music..."
                   v-model="musicStore.search.query"
                   @keydown="musicStore.doSearch"
-                  @keydown.backspace="musicStore.clearSearch"
+                  @keydown.backspace="musicStore.doSearch"
                 />
               </div>
               <button
+                v-if="!musicStore.search.query.length"
                 class="border-thin border-light w-[10%] font-thin flex flex-col justify-center align-center items-center hover:curser-pointer"
                 @click="musicStore.doSearch"
               >
@@ -36,6 +37,13 @@
                   :icon="['fas', 'magnifying-glass']"
                   color="#8d8484"
                 />
+              </button>
+              <button
+                v-else
+                class="border-thin border-light w-[10%] font-thin flex flex-col justify-center align-center items-center hover:curser-pointer"
+                @click="musicStore.clearSearch"
+              >
+                <font-awesome-icon :icon="['fas', 'times']" color="#8d8484" />
               </button>
             </div>
 
@@ -45,21 +53,44 @@
             >
               <!-- Filters: -->
               <div
-                class="w-full h-[120px] flex flex-col justify-start items-start align-start"
+                class="w-full min-h-[160px] mb-4 flex flex-col justify-start items-start align-start"
               >
                 <div
+                  class="w-full flex flex-wrap justify-end items-end align-end px-4 mb-4 h-[30px]"
+                >
+                  <!-- clear Filters -->
+                  <div
+                    class="filter-box min-h-[40px] px-2 py-1 cursor-pointer rounded-md me-2 flex flex-row justify-center items-center ms-2 z-20"
+                    @click="musicStore.clearFilters"
+                  >
+                    <p
+                      v-show="musicStore.search.filters.length > 0"
+                      class="text-white font-thin ms-5 me-2"
+                    >
+                      clear
+                    </p>
+                    <font-awesome-icon
+                      v-show="musicStore.search.filters.length > 0"
+                      :icon="['fas', 'times']"
+                      color="#8d8484"
+                    />
+                  </div>
+                </div>
+                <div
                   v-if="musicStore.interface"
-                  class="w-full flex flex-wrap justify-start items-start align-start px-4 mb-4"
+                  class="w-full flex flex-wrap justify-start items-start align-start px-4 mb-4 mt-[-30px]"
                 >
                   <p class="text-white font-bold me-3">genres:</p>
                   <div
                     v-for="(genre, index) in musicStore.interface.data.genres"
                     :key="index"
-                    class="filter-box h-[40px] px-2 py-1 bg-zinc-700 hover:bg-zinc-800 cursor-pointer rounded-md me-2 flex flex-col justify-center items-center"
+                    class="filter-box h-[30px] px-2 py-1 mb-1 bg-zinc-700 hover:bg-zinc-800 cursor-pointer rounded-md me-2 flex flex-col justify-center items-center"
                     :class="{ 'bg-primary_accent': genre.active }"
                     @click="musicStore.doFilter(genre)"
                   >
-                    <p class="text-white font-thin">{{ genre.label }}</p>
+                    <p class="text-white font-thin text-sm">
+                      {{ genre.label }}
+                    </p>
                   </div>
                 </div>
                 <div
@@ -70,21 +101,14 @@
                   <div
                     v-for="(artist, index) in musicStore.interface.data.artists"
                     :key="index"
-                    class="filter-box h-[40px] px-2 py-1 bg-zinc-700 hover:bg-zinc-800 cursor-pointer rounded-md me-2 flex flex-col justify-center items-center"
+                    class="filter-box h-[30px] px-2 mb-1 py-1 bg-zinc-700 hover:bg-zinc-800 cursor-pointer rounded-md me-2 flex flex-col justify-center items-center"
                     :class="{ 'bg-primary_accent': artist.active }"
                     @click="musicStore.doFilter(artist)"
                   >
-                    <p class="text-white font-thin">{{ artist.label }}</p>
+                    <p class="text-white font-thin text-sm">
+                      {{ artist.label }}
+                    </p>
                   </div>
-                </div>
-                <!-- clear  -->
-                <div
-                  v-if="musicStore.search.filters.length > 0"
-                  class="filter-box h-[30px] px-2 py-1 cursor-pointer rounded-md me-2 flex flex-row justify-center items-center ms-2 z-20"
-                  @click="musicStore.clearFilters"
-                >
-                  <p class="text-white font-thin me-2">clear</p>
-                  <font-awesome-icon :icon="['fas', 'times']" color="#8d8484" />
                 </div>
               </div>
               <!-- Headers -->
@@ -102,7 +126,7 @@
                 </div> -->
               </div>
               <div
-                v-if="musicStore.search.results"
+                v-if="musicStore.search.results.length"
                 class="w-[95%] mx-auto h-[75%] overflow-y-scroll relative"
               >
                 <TrackBox
@@ -117,6 +141,24 @@
                   class="mx-3 text-xl text-white sticky z-20 bottom-0 left-[95%] right-0"
                 />
               </div>
+              <p
+                v-else-if="
+                  musicStore.search?.filters.length &&
+                  !musicStore.search.results.length
+                "
+                class="text-white font-thin text-center px-5"
+              >
+                No tracks found
+              </p>
+              <p
+                v-if="
+                  musicStore.search.query.length &&
+                  !musicStore.search.results.length
+                "
+                class="text-white font-thin text-center px-5"
+              >
+                No tracks found for "{{ musicStore.search.query }}"
+              </p>
             </div>
           </div>
         </div>
