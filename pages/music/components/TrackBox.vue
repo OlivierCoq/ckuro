@@ -29,9 +29,20 @@
       <span>{{ props.track.title }}</span>
     </div>
     <div class="w-[25%] text-gray-100 font-thin">
-      <span v-for="artist in props.track.music_artists" :key="artist.id">
+      <p
+        v-for="(artist, a) in props.track.music_artists"
+        :key="a"
+        class="text-xs"
+      >
         {{ artist.name }}
-      </span>
+        <span
+          v-if="
+            props.track.music_artists.length > 1 &&
+            a == props.track.music_artists.length - 2
+          "
+          >,
+        </span>
+      </p>
     </div>
     <div class="w-[25%] font-thin">
       <RatingSystem :track="props.track" />

@@ -8,9 +8,11 @@
       class="me-2 cursor-pointer hover:text-yellow-400"
       :class="[
         {
-          'text-yellow-400': i <= state.selected_rating,
+          'text-yellow-400':
+            i <= state.selected_rating ||
+            i <= state.hover ||
+            i <= state.average,
           'text-gray-400': i > state.selected_rating,
-          'text-yellow-400': i <= state.average,
         },
       ]"
       :icon="[`${i <= state.selected_rating ? 'fas' : 'far'}`, 'star']"
@@ -18,6 +20,7 @@
       :key="i"
       @click="select_rating(i)"
       @mouseover="star_hover(i)"
+      @mouseleave="star_hover(0)"
     />
   </div>
   <div
@@ -92,7 +95,9 @@ const calculate_average = () => {
   return state.average;
 };
 
-const star_hover = (rating) => {};
+const star_hover = (rating) => {
+  state.hover = rating;
+};
 
 onMounted(() => {
   calculate_average();
