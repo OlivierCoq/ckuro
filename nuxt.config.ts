@@ -64,6 +64,7 @@ export default defineNuxtConfig({
   pinia: {
     autoImports: ["defineStore", ["defineStore", "definePiniaStore"]],
   },
+
   runtimeConfig: {
     public: {
       NUXT_STRAPI_URL: process.env.STRAPI_URL,

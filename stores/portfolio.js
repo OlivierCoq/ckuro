@@ -46,9 +46,22 @@ export const usePortfolioStore = defineStore({
       )}`)
         .then(res => res.json())
       .catch(err => console.error(err))
+      nextTick(() => {
+        this.search.results = this.projects.data
+      })
     },
     // User methods:
-    async doSearch() { }
+    async doSearch() {
+      this.search.loading = true
+      this.search.results = this.projects.data.filter(project => {
+        return project.title.toLowerCase().includes(this.search.query.toLowerCase())
+      })
+      this.search.loading = false
+    },
+    async clearSearch() {
+      this.search.query = ""
+      this.search.results = this.projects.data
+    }
   },
   getters: {},
   persist: {

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-cover bg-no-repeat p-2"
+    class="bg-cover bg-no-repeat p-2 h-full w-full"
     :style="`background-image: url(${props.project.images[0]?.url})`"
   >
     <div
