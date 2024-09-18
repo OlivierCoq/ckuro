@@ -14,7 +14,7 @@
         <div class="ctr-main h-full shadow-xl me-5">
           <!-- Meat + Potatoes -->
           <div
-            class="w-full h-full flex flex-col justify-start items-start align-start py-4"
+            class="w-full h-full flex flex-col justify-between items-start align-start py-4"
           >
             <!-- Search -->
             <div class="flex flex-row w-full mb-4 px-4">
@@ -23,20 +23,68 @@
                   type="text"
                   class="w-full h-full bg-transparent text-white font-thin search"
                   placeholder="Search blog..."
-                  v-model="blogStore.search.query"
-                  @keydown="blogStore.doSearch"
-                  @keydown.backspace="blogStore.clearSearch"
+                  v-model="state.interface.search.query"
+                  @keydown.enter="doSearch"
                 />
               </div>
               <button
+                v-if="!state.clear"
                 class="border-thin border-light w-[10%] font-thin flex flex-col justify-center align-center items-center hover:curser-pointer"
-                @click="blogStore.doSearch"
+                @click="doSearch"
               >
                 <font-awesome-icon
                   :icon="['fas', 'magnifying-glass']"
                   color="#8d8484"
                 />
               </button>
+              <button
+                v-else
+                class="border-thin border-light w-[10%] font-thin flex flex-col justify-center align-center items-center hover:curser-pointer"
+                @click="clearSearch"
+              >
+                <font-awesome-icon :icon="['fas', 'times']" color="#8d8484" />
+              </button>
+            </div>
+
+            <!-- Blog Posts -->
+            <div class="flex-1 w-[95%] mx-auto flex flex-col overflow-y-scroll">
+              <PreviewCard
+                v-for="post in state.interface.search.results"
+                :key="post.id"
+                :post="post"
+                @select-post="state.select_post = post"
+                @closemodal="state.select_post = null"
+              />
+            </div>
+            <!-- Navigation -->
+            <div
+              class="w-[95%] h-[40px] bg-zinc-500/30 mx-auto mt-4 flex flex-col justify-center items-center align-center"
+            >
+              <div class="w-1/2 h-full mx-auto flex flex-row justify-center">
+                <button
+                  class="w-[50px] h-full border-thin border-light hover:cursor-pointer"
+                  @click="prev_page"
+                >
+                  <font-awesome-icon
+                    :icon="['fas', 'chevron-left']"
+                    color="#8d8484"
+                  />
+                </button>
+                <button
+                  class="w-[50px] h-full border-thin border-light hover:cursor-pointer"
+                  @click="next_page"
+                  :disabled="
+                    state.interface.pagination.page *
+                      state.interface.pagination.pageSize >=
+                    state.interface.pagination.total
+                  "
+                >
+                  <font-awesome-icon
+                    :icon="['fas', 'chevron-right']"
+                    color="#8d8484"
+                  />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -74,6 +122,7 @@ definePageMeta({
 });
 
 // Components
+import PreviewCard from "./components/PreviewCard.vue";
 
 // Stores
 const blogStore = useBlogStore();
@@ -82,11 +131,96 @@ const blogStore = useBlogStore();
 const state = reactive({
   nav_links: [],
   posts: [],
+  target_post: null,
+  total_posts: null,
+  clear: false,
   interface: {
+    search: {
+      query: "",
+      results: [],
+    },
     tags: [],
     authors: [],
+    pagination: {
+      page: 1,
+      pageSize: 2,
+      total: 0,
+    },
   },
 });
+
+// Methods
+// Fetch posts
+const init = async () => {
+  $fetch(`${config.public.NUXT_STRAPI_URL}/api/blog-posts`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    state.interface.pagination.total = response.data.length;
+    fetch_posts();
+  });
+};
+init();
+const fetch_posts = async () => {
+  //Calculate total posts:
+
+  $fetch(
+    `${config.public.NUXT_STRAPI_URL}/api/blog-posts?${qs.stringify(
+      {
+        filters: {
+          title: {
+            $containsi: state.interface.search.query,
+          },
+        },
+        populate: ["title", "hero_image", "body", "blog_tags"],
+        pagination: state.interface.pagination,
+        sort: "publishedAt:desc",
+      },
+      { encodeValuesOnly: true, arrayFormat: "brackets" },
+    )}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  ).then((response) => {
+    state.posts = response.data;
+    state.interface.search.results = response.data;
+  });
+};
+
+const next_page = () => {
+  state.interface.pagination.page += 1;
+  fetch_posts();
+};
+
+const prev_page = () => {
+  state.interface.pagination.page -= 1;
+  fetch_posts();
+};
+
+const doSearch = () => {
+  // state.interface.search.results = state.posts.filter((post) =>
+  //   post.title
+  //     .toLowerCase()
+  //     .includes(state.interface.search.query.toLowerCase()),
+  // );
+  fetch_posts();
+  state.clear = true;
+};
+
+const clearSearch = () => {
+  state.interface.search.query = "";
+  state.interface.pagination = {
+    page: 1,
+    pageSize: 2,
+    total: 0,
+  };
+  fetch_posts();
+};
 </script>
 <style lang="scss">
 .border-thin {

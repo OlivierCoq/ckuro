@@ -25,7 +25,8 @@
     "pinia": "^2.2.2",
     "qs": "^6.13.0",
     "uuid": "^10.0.0",
-    "vue": "latest"
+    "vue": "latest",
+    "vue-markdown-render": "^2.2.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
