@@ -104,6 +104,18 @@
           >
             Tags
           </h2>
+          <div
+            class="w-full h-[40px] p-2 bg-zinc-500/30 mx-auto mt-4 flex flex-row flex-wrap"
+          >
+            <div
+              v-for="tag in state.interface.tags"
+              :key="tag.id"
+              class="h-full hover:cursor-pointer me-3"
+              @click="filter_by_tag(tag)"
+            >
+              <p class="text-white text-sm font-thin matrix">{{ tag.name }}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -150,6 +162,17 @@ const state = reactive({
 });
 
 // Methods
+const fetch_tags = async () => {
+  $fetch(`${config.public.NUXT_STRAPI_URL}/api/blog-tags`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    state.interface.tags = response.data;
+  });
+};
+
 // Fetch posts
 const init = async () => {
   $fetch(`${config.public.NUXT_STRAPI_URL}/api/blog-posts`, {
@@ -160,6 +183,7 @@ const init = async () => {
   }).then((response) => {
     state.interface.pagination.total = response.data.length;
     fetch_posts();
+    fetch_tags();
   });
 };
 init();
@@ -220,6 +244,11 @@ const clearSearch = () => {
     total: 0,
   };
   fetch_posts();
+};
+
+const filter_by_tag = (tag) => {
+  state.interface.search.query = tag.name;
+  doSearch();
 };
 </script>
 <style lang="scss">
