@@ -21,10 +21,13 @@
     "@nuxtjs/composition-api": "^0.34.0",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.1",
     "@pinia/nuxt": "^0.5.4",
+    "core-js": "^3.38.1",
     "nuxt": "^3.12.4",
     "pinia": "^2.2.2",
     "qs": "^6.13.0",
+    "shaka-player": "^4.11.4",
     "uuid": "^10.0.0",
+    "video.js": "^8.17.4",
     "vue": "latest",
     "vue-markdown-render": "^2.2.1"
   },

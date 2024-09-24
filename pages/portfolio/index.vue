@@ -56,17 +56,24 @@
                 :key="a"
                 class="h-[245px] w-full"
               >
-                <PortfolioCard :project="project" @open="open_modal(project)" />
+                <PortfolioCard
+                  :project="project"
+                  @click="open_modal(project)"
+                  @close="close_modal"
+                />
                 <!-- Modal -->
                 <div
-                  v-if="state.modal.open"
+                  v-if="
+                    state.modal.open && state.target_project.id === project.id
+                  "
+                  :id="`main_content_modal-${project.id}}`"
                   class="fixed top-0 left-0 w-full h-full bg-black/40 bg-opacity-90 flex flex-col items-start z-50 fade-in"
                 >
                   <div class="w-full p-4 flex flex-row items-end justify-end">
                     <font-awesome-icon
                       :icon="['fas', 'times']"
                       class="mx-3 cursor-pointer text-xl text-white"
-                      @click="state.modal.open = !state.modal.open"
+                      @click="close_modal"
                     />
                   </div>
                   <div class="w-full h-[90vh] flex flex-row">
@@ -84,22 +91,15 @@
                       <div
                         class="w-[70%] h-full flex flex-col justify-center items-center"
                       >
-                        <div v-if="state.target_project" class="w-full">
+                        <div class="w-full">
                           <video
                             v-if="state.target_project"
-                            class="w-full object-cover"
-                            controls
-                            :key="state.comp"
-                          >
-                            <source
-                              :src="state.target_video"
-                              type="video/mp4"
-                            />
-                            Damn :( Your browser doesn't' support the video tag
-                            cuz its lame. Get a new browser.
-                          </video>
+                            ref="video_elem"
+                            id="video_elem"
+                            class="video-js vjs-default-skin vjs-big-play-centered w-full"
+                          ></video>
                           <img
-                            v-else
+                            v-if="!state.target_project"
                             :src="state.target_project.images[0].url"
                             class="w-full h-[70vh] object-cover"
                           />
@@ -128,13 +128,13 @@
                                 class="w-full h-full absolute top-0 z-20 cursor-pointer hover:bg-black/80"
                                 @click="toggle_target_video(video.link)"
                               ></div>
-                              <video
+                              <!-- <video
                                 class="w-full h-full object-cover absolute z-10"
                                 :src="video.link"
                               >
                                 Damn :( Your browser doesn't' support the video
                                 tag cuz its lame. Get a new browser.
-                              </video>
+                              </video> -->
                             </div>
                           </div>
                         </div>
@@ -180,6 +180,9 @@
 // config/setup
 const config = useRuntimeConfig();
 import qs from "qs";
+// import Hls from "hls.js";
+import videojs from "video.js";
+const video_elem = ref(null);
 
 // Meta
 definePageMeta({
@@ -206,12 +209,60 @@ const state = reactive({
 });
 
 // Methods
+//
+let player = ref(null);
+
+const load_video = () => {
+  const video = video_elem.value;
+  console.log("video", video[0].id, state.target_video);
+  if (video[0].id) {
+    player.value = videojs(video[0].id, {
+      controls: true,
+      autoplay: true,
+      preload: "auto",
+      fluid: true,
+      sources: [
+        {
+          src: state.target_video,
+          type: "application/x-mpegURL",
+        },
+      ],
+    });
+  }
+};
+
+const reload_video = () => {
+  if (player.value) {
+    player.value.dispose();
+    player.value = null;
+    nextTick(() => {
+      load_video();
+    });
+  } else {
+    nextTick(() => {
+      load_video();
+    });
+  }
+};
 
 const open_modal = (project) => {
   state.target_project = project;
   state.target_video = project.videos[0]?.link;
+  state.modal.open = true;
   nextTick(() => {
-    state.modal.open = true;
+    load_video();
+  });
+};
+
+const close_modal = () => {
+  state.modal.open = false;
+  state.target_project = null;
+  state.target_video = false;
+  nextTick(() => {
+    if (player.value) {
+      player.value.dispose();
+      player.value = null;
+    }
   });
 };
 
@@ -223,22 +274,27 @@ const toggle_target_video = (video) => {
 // select next project
 const select_next = () => {
   state.target_video = false;
+  if (player.value) {
+    player.value.dispose();
+    player.value = null;
+  }
   const projects = portfolioStore.projects.data;
   const index = projects.findIndex(
     (project) => project.id === state.target_project.id,
   );
   if (index === projects.length - 1) {
     state.target_project = projects[0];
+    state.target_video = projects[0].videos[0]?.link;
     nextTick(() => {
-      state.target_video = projects[0].videos[0]?.link;
       state.comp++;
+      reload_video();
     });
   } else {
     state.target_project = projects[index + 1];
+    state.target_video = projects[index + 1].videos[0]?.link;
     state.comp++;
     nextTick(() => {
-      state.target_video = projects[index + 1].videos[0]?.link;
-      state.comp++;
+      reload_video();
     });
   }
 };
@@ -251,19 +307,21 @@ const select_previous = () => {
   );
   if (index === 0) {
     state.target_project = projects[projects.length - 1];
+    state.target_video = projects[projects.length - 1].videos[0]?.link;
     nextTick(() => {
-      state.target_video = projects[projects.length - 1].videos[0]?.link;
       state.comp++;
+      reload_video();
     });
   } else {
     state.target_project = projects[index - 1];
+    state.target_video = projects[index - 1].videos[0]?.link;
+
     nextTick(() => {
-      state.target_video = projects[index - 1].videos[0]?.link;
       state.comp++;
+      reload_video();
     });
   }
 };
-// fetch portfolio
 </script>
 <style lang="scss">
 .border-thin {

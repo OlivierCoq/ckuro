@@ -30,6 +30,10 @@ export default defineNuxtConfig({
           rel: "manifest",
           href: "https://res.cloudinary.com/dgmz3uymj/raw/upload/v1725422153/site_12707fde25.webmanifest",
         },
+        {
+          rel: "stylesheet",
+          href: "https://vjs.zencdn.net/7.2.3/video-js.css",
+        },
       ],
       script: [
         {
@@ -64,7 +68,10 @@ export default defineNuxtConfig({
   pinia: {
     autoImports: ["defineStore", ["defineStore", "definePiniaStore"]],
   },
-
+  hls: {
+    fallbackIfUnsupported: false,
+    hlsTime: 3,
+  },
   runtimeConfig: {
     public: {
       NUXT_STRAPI_URL: process.env.STRAPI_URL,
