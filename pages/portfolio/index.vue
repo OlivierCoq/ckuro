@@ -54,7 +54,7 @@
               <div
                 v-for="(project, a) in portfolioStore.search.results"
                 :key="a"
-                class="h-[245px] w-full"
+                class="h-[245px] w-full lg:w-1/2"
               >
                 <PortfolioCard
                   :project="project"
@@ -67,7 +67,7 @@
                     state.modal.open && state.target_project.id === project.id
                   "
                   :id="`main_content_modal-${project.id}}`"
-                  class="fixed top-0 left-0 w-full h-full bg-black/40 bg-opacity-90 flex flex-col items-start z-50 fade-in"
+                  class="fixed top-0 left-0 w-full h-full bg-black/90 bg-opacity-95 flex flex-col items-start z-50 fade-in"
                 >
                   <div class="w-full p-4 flex flex-row items-end justify-end">
                     <font-awesome-icon
@@ -91,12 +91,14 @@
                       <div
                         class="w-[70%] h-full flex flex-col justify-center items-center"
                       >
-                        <div class="w-full">
+                        <div id="ctr_video" class="w-full">
+                          <!-- Main video here: -->
                           <video
-                            v-if="state.target_project"
+                            v-show="state.target_project"
                             ref="video_elem"
                             id="video_elem"
                             class="video-js vjs-default-skin vjs-big-play-centered w-full"
+                            :key="state.target_project.id"
                           ></video>
                           <img
                             v-if="!state.target_project"
@@ -108,7 +110,7 @@
                       <div
                         class="w-[30%] h-full flex flex-col justify-start items-start p-4"
                       >
-                        <h1 class="text-5xl text-white mt-20 mb-4">
+                        <h1 class="text-5xl text-white mt-20 mb-4 matrix">
                           {{ state.target_project.title }}
                         </h1>
                         <p class="text-white">
@@ -125,7 +127,10 @@
                               class="w-full h-[100px] flex flex-col justify-center items-center relative"
                             >
                               <div
-                                class="w-full h-full absolute top-0 z-20 cursor-pointer hover:bg-black/80"
+                                class="w-full h-full absolute top-0 z-20 cursor-pointer hover:bg-black/80 bg-cover bg-center bg-no-repeat"
+                                :style="{
+                                  'background-image': `url(${video.poster_image.url})`,
+                                }"
                                 @click="toggle_target_video(video.link)"
                               ></div>
                               <!-- <video
@@ -214,6 +219,7 @@ let player = ref(null);
 
 const load_video = () => {
   const video = video_elem.value;
+  console.log("video[0].id", video[0].id);
   console.log("video", video[0].id, state.target_video);
   if (video[0].id) {
     player.value = videojs(video[0].id, {
@@ -267,8 +273,43 @@ const close_modal = () => {
 };
 
 const toggle_target_video = (video) => {
+  player.value.dispose();
+  player.value = null;
   state.target_video = video;
-  state.comp++;
+
+  const ctr_video = document.getElementById("ctr_video");
+  // Create a <video> element and append it to ctr_video:
+  const video_element = document.createElement("video");
+  video_element.id = video_elem.value[0].id;
+  // give it these classes: video-js vjs-default-skin vjs-big-play-centered w-full
+  video_element.classList.add(
+    "video-js",
+    "vjs-default-skin",
+    "vjs-big-play-centered",
+    "w-full",
+  );
+  nextTick(() => {
+    ctr_video.appendChild(video_element);
+    // give it the id of video_elem.value[0].id:
+
+    nextTick(() => {
+      video_elem.value;
+      console.log("you're looking for: ", video_elem.value[0].id);
+
+      player.value = videojs(video_elem.value[0].id, {
+        controls: true,
+        autoplay: true,
+        preload: "auto",
+        fluid: true,
+        sources: [
+          {
+            src: state.target_video,
+            type: "application/x-mpegURL",
+          },
+        ],
+      });
+    });
+  });
 };
 
 // select next project

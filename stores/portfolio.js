@@ -40,6 +40,7 @@ export const usePortfolioStore = defineStore({
             "description",
             "images",
             "videos",
+            "videos.poster_image"
           ],
         },
         { arrayFormat: "comma" },
