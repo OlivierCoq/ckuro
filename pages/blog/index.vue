@@ -105,12 +105,12 @@
             Tags
           </h2>
           <div
-            class="w-full h-[40px] p-2 bg-zinc-500/30 mx-auto mt-4 flex flex-row flex-wrap"
+            class="w-full min-h-[40px] p-2 bg-zinc-500/30 mx-auto mt-4 flex flex-row flex-wrap"
           >
             <div
               v-for="tag in state.interface.tags"
               :key="tag.id"
-              class="h-full hover:cursor-pointer me-3"
+              class="h-[40px] hover:cursor-pointer me-3"
               @click="filter_by_tag(tag)"
             >
               <p class="text-white text-sm font-thin matrix">{{ tag.name }}</p>
@@ -198,7 +198,20 @@ const fetch_posts = async () => {
             $containsi: state.interface.search.query,
           },
         },
-        populate: ["title", "hero_image", "body", "blog_tags"],
+        populate: [
+          "title",
+          "hero_image",
+          "body",
+          "blog_tags",
+          "comment_threads",
+          "comment_threads.comments",
+          "comment_threads.comments.commenter",
+          "comment_threads.comments.body",
+          "comment_threads.comments.replies",
+          "comment_threads.comments.replies.user",
+          "comment_threads.comments.replies.body",
+          "comment_threads.comments.replies.target",
+        ],
         pagination: state.interface.pagination,
         sort: "publishedAt:desc",
       },

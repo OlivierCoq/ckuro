@@ -14,7 +14,7 @@
         class="w-11/12 h-full bg-white rounded-lg flex flex-col items-center justify-s"
       >
         <div
-          class="w-full h-1/2 flex flex-col items-start justify-center bg-start bg-cover bg-no-repeat"
+          class="w-full h-2/5 flex flex-col items-start justify-center bg-start bg-cover bg-no-repeat"
           :style="`background-image: url('${props.post.hero_image.url}');`"
         >
           <!-- <img
@@ -23,14 +23,20 @@
             class="w-full h-full object-cover rounded-t-lg"
           /> -->
         </div>
-        <div class="w-full h-1/2 p-4 flex flex-col items-start justify-start">
+        <div class="w-full h-3/5 p-4 flex flex-col items-start justify-start">
           <div class="w-full flex flex-row justify-between">
             <h1 class="text-2xl font-bold text-gray-800 matrix mb-10">
               {{ post.title }}
             </h1>
           </div>
-          <div class="w-full lg:w-3/4 post-body pe-8 overflow-y-scroll">
-            <vue-markdown :source="post.body" />
+          <div class="w-full flex flex-row overflow-hidden">
+            <div class="w-full lg:w-2/3 post-body pe-8 overflow-y-scroll">
+              <vue-markdown :source="post.body" />
+            </div>
+            <div class="w-full lg:w-1/3 overflow-y-scroll">
+              <h3 class="text-neutral-900 matrix ms-4">What the people are saying</h3>
+              <CommentsSection :threads="props.post.comment_threads" />
+            </div>
           </div>
         </div>
       </div>
@@ -47,6 +53,7 @@ const props = defineProps({
 
 // components
 import VueMarkdown from "vue-markdown-render";
+import CommentsSection from '~/components/common/Comments/CommentsSection.vue';
 
 // Emit methods
 const emits = defineEmits(["close"]);
