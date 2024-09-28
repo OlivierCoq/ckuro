@@ -9,12 +9,12 @@
         @click="close_blog_modal"
       />
     </div>
-    <div class="w-full h-[95vh] flex flex-col items-center justify-start">
+    <div class="w-full h-[95vh] flex flex-col items-center justify-start overflow-y-scroll">
       <div
         class="w-11/12 h-full bg-white rounded-lg flex flex-col items-center justify-s"
       >
         <div
-          class="w-full h-2/5 flex flex-col items-start justify-center bg-start bg-cover bg-no-repeat"
+          class="w-full h-1/5 lg:h-2/5 flex flex-col items-start justify-center bg-start bg-cover bg-no-repeat"
           :style="`background-image: url('${props.post.hero_image.url}');`"
         >
           <!-- <img
@@ -23,19 +23,20 @@
             class="w-full h-full object-cover rounded-t-lg"
           /> -->
         </div>
-        <div class="w-full h-3/5 p-4 flex flex-col items-start justify-start">
+        <div class="w-full h-4/5 lg:h-3/5 p-4 flex flex-col items-start justify-between lg:justify-start">
           <div class="w-full flex flex-row justify-between">
             <h1 class="text-2xl font-bold text-gray-800 matrix mb-10">
               {{ post.title }}
             </h1>
           </div>
-          <div class="w-full flex flex-row overflow-hidden">
-            <div class="w-full lg:w-2/3 post-body pe-8 overflow-y-scroll">
+          <div class="w-full  flex flex-col lg:flex-row overflow-hidden">
+            <div class="w-full h-[600px] lg:w-2/3 post-body pe-8 overflow-y-scroll mb-4">
               <vue-markdown :source="post.body" />
             </div>
-            <div class="w-full lg:w-1/3 overflow-y-scroll">
-              <h3 class="text-neutral-900 matrix ms-4">What the people are saying</h3>
-              <CommentsSection :threads="props.post.comment_threads" />
+            <div class="w-full h-[600px]  lg:w-1/3">
+              <h3 class="text-neutral-900 matrix lg:ms-4">What the people are saying</h3>
+              <p class="text-sm text-neutral-500 lg:ms-4">Comments ({{ props.post.comment_threads.length }})</p>
+              <CommentsSection :threads="props.post.comment_threads" /> 
             </div>
           </div>
         </div>
