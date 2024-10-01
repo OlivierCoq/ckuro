@@ -74,7 +74,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      NUXT_STRAPI_URL: process.env.STRAPI_URL,
+      NUXT_STRAPI_URL: process.env.STRAPI_URL || "http://localhost:1337",
     },
   },
 });
