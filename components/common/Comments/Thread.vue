@@ -25,11 +25,11 @@
       </div>
 
       <div class="w-full flex flex-row justify-center items-center mt-4">
-        <input type="text" class="w-[80%] h-[30px] border-thin border-zinc-200 p-1" v-model="state.new_comment" :placeholder="state.logged_in ? 'reply' : 'log in before replying'" />
+        <input type="text" class="w-[80%] h-[30px] border-thin border-zinc-200 p-1" v-model="state.new_comment" :placeholder="authStore.user ? 'reply' : 'log in before replying'" />
         <button 
           class="w-[20%] h-[32px] m-0 bg-primary_accent text-white" 
-          :disabled="!state.logged_in"
-          :class="!state.logged_in ? 'cursor-not-allowed opacity-[0.5]' : 'hover:cursor-pointer'"
+          :disabled="!authStore.user || !state.new_comment.length"
+          :class="!authStore.user ? 'cursor-not-allowed opacity-[0.5]' : 'hover:cursor-pointer'"
         >
            <font-awesome-icon :icon="['fas', 'paper-plane']" />
         </button>
@@ -51,9 +51,11 @@
     },
   });
 
+  const config = useRuntimeConfig();
+  const authStore = useAuthStore();
   const state = reactive({
     new_comment: "",
-    logged_in: false
+    logged_in: authStore.user
   });
 
   const init_replies = () => {
@@ -83,7 +85,7 @@
     const now = new Date();
     const comment_time = new Date(time);
     const diff = now - comment_time;
-    const seconds = Math.floor(diff / 1000);
+    const seconds = Math.floor(diff / 1000) ? Math.floor(diff / 1000) : 0;
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);

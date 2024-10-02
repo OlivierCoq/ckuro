@@ -3,11 +3,12 @@
     <div v-if="!props.threads.length" class="font-thin text-sm mb-2">Kinda empty here. Log in and get the party started!</div>
 
     <div v-if="!state.form" class="w-full min-h-[8rem] mb-8 pb-8">
-      <textarea type="text" class="w-full h-full border-thin border-zinc-200 p-1" v-model="state.new_comment" :placeholder="authStore.user ? 'comment' : 'log in before commenting'" />
+      <textarea type="text" class="w-full h-full border-thin border-zinc-200 p-1" v-model="state.new_comment.comments[0].body" :placeholder="authStore.user ? 'comment' : 'log in before commenting'" />
       <button 
         class="w-full h-[32px] m-0 bg-primary_accent text-white" 
-        :disabled="!state.logged_in"
-        :class="!authStore.user ? 'cursor-not-allowed opacity-[0.5]' : 'hover:cursor-pointer'"
+        :disabled="!authStore.user"
+        :class="!authStore.user || !state.new_comment.comments[0].body.length ? 'cursor-not-allowed opacity-[0.5]' : 'hover:cursor-pointer'"
+        @click="post_comment"
       >
         <font-awesome-icon :icon="['fas', 'paper-plane']" />
       </button> 
@@ -63,15 +64,22 @@
     </div>
 
     <div class="w-full min-h-[15rem] mt-6 mb-3 overflow-y-scroll">
-      <Thread v-for="(thread, a) in props.threads" :key="a" :thread="thread" />
+      <Thread v-for="(thread, a) in state.threads" :key="a" :thread="thread" />
     </div>
     <!-- <Thread v-for="(thread, a) in props.threads" :key="a" :thread="thread" /> -->
   </div>
 </template>
 <script setup lang="ts">
 
-import { defineProps, reactive, watch } from 'vue';
+import { defineProps, reactive, watch, onMounted, nextTick } from 'vue';
+import qs from 'qs';
+
+const config = useRuntimeConfig();
 const props = defineProps({
+  target: {
+    type: Object,
+    required: true,
+  },
   threads: {
     type: Array,
     required: true,
@@ -86,7 +94,16 @@ const route = useRouter()
 console.log('route', route.currentRoute.value);
 
 const state = reactive({
-  new_comment: "",
+  new_comment: {
+    blog_posts: props.target,
+    comments: [{
+      commenter: authStore.user,
+      body: "",
+      replies: [],
+      visible: true
+    }]
+  },
+  threads: null,
   credentials: {
     username: "",
     email: "",
@@ -100,6 +117,7 @@ const state = reactive({
     username: false,
     email: false,
     password: false,
+    new_comment: false,
   },
   form: false,
   login_mode: false,
@@ -107,6 +125,36 @@ const state = reactive({
   error: authStore?.error,
   success: authStore?.success,
 });
+
+
+
+const get_comments = () => {
+  
+  $fetch(`${config.public.NUXT_STRAPI_URL}/api/comment-threads?${qs.stringify({
+    filters: {
+      blog_posts: props.target.id,
+    },
+    populate: [
+      "comments",
+      "comments.commenter",
+      "comments.replies",
+      "comments.replies.user",
+    ],
+    sort: "createdAt:desc",
+  })}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    state.threads = response.data;
+  });
+
+};
+onMounted(()=> {
+  get_comments();
+})
+
 
 // validate password. Must have at least 8 characters, 1 uppercase, 1 lowercase, 1 number, and 1 special character
 const validate_password = (password: String) => {
@@ -191,8 +239,52 @@ const register = () => {
  }
 };
 
+
+// validate new comment
+const validate_new_comment = (new_comment: String) => {
+  return new_comment.length > 0;
+};
+
+// post comment
+const post_comment = () => {
+   
+  if(state.new_comment.comments[0].body.length) {
+    console.log("posting comment", state.new_comment);
+    /* 
+       Posting a comment is actually adding a new thread. 
+
+       - update Strapi post.comment_threads with the new thread
+    */
+    
+
+    nextTick(() => {
+      $fetch(`${config.public.NUXT_STRAPI_URL}/api/comment-threads`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(state.new_comment),
+      }).then((response) => {
+        console.log("response", response);
+        state.threads.unshift(state.new_comment)
+      });
+    });
+
+
+  }
+  else {
+    console.log("invalid comment", state.valid.new_comment);
+  }
+};
+
 // Watch for changes in the email and password fields:
-watch([() => state.credentials.login_username, () => state.credentials.email, () => state.credentials.password, () => state.credentials.username], ([login_username, email, password, username]) => {
+watch([
+    () => state.credentials.login_username, 
+    () => state.credentials.email, 
+    () => state.credentials.password, 
+    () => state.credentials.username
+  ], 
+    ([login_username, email, password, username]) => {
   state.valid.email = validate_email(email);
   state.valid.password = validate_password(password);
   state.valid.username = validate_username(username);

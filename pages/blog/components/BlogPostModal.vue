@@ -36,7 +36,7 @@
             <div class="w-full h-[600px]  lg:w-1/3">
               <h3 class="text-neutral-900 matrix lg:ms-4">What the people are saying</h3>
               <p class="text-sm text-neutral-500 lg:ms-4">Comments ({{ props.post.comment_threads.length }})</p>
-              <CommentsSection :threads="props.post.comment_threads" /> 
+              <CommentsSection :target="props.post" :threads="props.post.comment_threads" /> 
             </div>
           </div>
         </div>

@@ -204,6 +204,7 @@ const fetch_posts = async () => {
           "body",
           "blog_tags",
           "comment_threads",
+          "comment_threads.blog_posts",
           "comment_threads.comments",
           "comment_threads.comments.commenter",
           "comment_threads.comments.body",
