@@ -4,8 +4,8 @@ import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
-const api_url = 'https://strapi-potr.onrender.com'
-// const api_url = 'http://localhost:1337'
+
+const config = useRuntimeConfig();
 import qs from "qs";
 
 export const useAuthStore = defineStore({
@@ -23,7 +23,7 @@ export const useAuthStore = defineStore({
     // User methods:
     async logIn(identifier, password) {
   
-      $fetch(`${api_url}/api/auth/local`, {
+      $fetch(`${config.public.NUXT_STRAPI_URL}/api/auth/local`, {
         method: 'POST',
         body: JSON.stringify({ identifier, password }),
         headers: {
@@ -34,12 +34,9 @@ export const useAuthStore = defineStore({
         console.log('user', res);
         this.user = res.user;
         this.token = res.jwt;
-        return {
-          user: res.user,
-          logged_in: true,
-          success: 'Logged in successfully'
-        }
+        this.error = false;
       }).catch((err) => {
+        this.error = err;
         console.error(err);
       })
   
@@ -51,6 +48,13 @@ export const useAuthStore = defineStore({
         // rediret to data.body.destination:
         window.location.href = data.body.destination;
       });
+    },
+    async clear() {
+      this.error = null;
+      this.success = null;
+      // console.log('clearing');
+      // console.log(this.error);
+      // console.log(this.success);
     },
     async logOut() { },
     async register(username, email, password, route) { 

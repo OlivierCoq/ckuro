@@ -23,7 +23,7 @@
       <div v-if="authStore" class="w-full flex flex-col items-center justify-center pe-10">
         <input v-if="state.register_mode" type="text" v-model="state.credentials.username" class="w-full h-[30px] border-thin border-zinc-200 p-1 mb-2" placeholder="username" />
         <input v-if="state.register_mode" type="text" v-model="state.credentials.email" class="w-full h-[30px] border-thin border-zinc-200 p-1 mb-2" placeholder="email" />
-        <input v-else type="text" v-model="state.credentials.login_username" class="w-full h-[30px] border-thin border-zinc-200 p-1 mb-2" placeholder="login email" />   
+        <input v-else type="text" v-model="state.credentials.login_username" class="w-full h-[30px] border-thin border-zinc-200 p-1 mb-2" @keydown="clear" placeholder="login email" />   
         <input type="password" v-model="state.credentials.password" class="w-full h-[30px] border-thin border-zinc-200 p-1 mb-2" placeholder="password" />
         <div class="w-full flex flex-row content-center justify-start">
           <button 
@@ -53,8 +53,8 @@
           </small>
         </div>
         <div v-if="state.login_mode" class="w-full flex flex-row justify-start text-start">
-          <small v-if="authStore.error?.length" class="text-xs text-red-500 mt-2">
-            <em>{{ authStore.error }}</em>
+          <small v-if="state.error" class="text-xs text-red-500 mt-2">
+            <em>{{ state.error }}</em>
           </small>
         </div>
         <div class="w-full flex flex-row justify-start content-start">
@@ -155,6 +155,12 @@ onMounted(()=> {
   get_comments();
 })
 
+// clear
+const clear = () => {
+  state.error = false;
+  state.success = false;
+  authStore.clear();
+};
 
 // validate password. Must have at least 8 characters, 1 uppercase, 1 lowercase, 1 number, and 1 special character
 const validate_password = (password: String) => {
@@ -191,24 +197,51 @@ const toggle_login = () => {
   state.error = false;
   state.success = false;
 };
-const login = () => {
+const login = async () => {
+  clear();
   if(state.valid.login_username && state.valid.password) {
-    console.log("logging in");
-    state.success = authStore.logIn(state.credentials.login_username, state.credentials.password, route.currentRoute.value.path);
+    authStore.logIn(state.credentials.login_username, state.credentials.password, route.currentRoute.value.path);
 
-    nextTick(() => {
+    nextTick(async () => {
       state.success = false;
       // clear form:
       state.credentials.email = "";
       state.credentials.password = "";
       state.valid.email = false;
       state.valid.password = false;
+      
+
+
     });
+    
   }
   else {
     console.log("invalid email or password", state.valid.email, state.valid.password);
   }
 };
+
+// Watch for changes in authStore.error, authStore.success, and authStore.user:
+watch(() => authStore.success, (success) => {
+  if(success) {
+    state.success = success;
+    state.form = false;
+    state.error = false;
+  }
+});
+watch(() => authStore.user, (user) => {
+  if(user) {
+    state.logged_in = true;
+    state.form = false;
+    state.error = false;
+    state.new_comment.comments[0].commenter = user;
+  }
+});
+watch(() => authStore.error, (error) => {
+  if(error) {
+    state.error = 'Invalid email or password';
+  }
+});
+
 
 // register
 const toggle_register = () => {
@@ -240,6 +273,7 @@ const register = () => {
 };
 
 
+
 // validate new comment
 const validate_new_comment = (new_comment: String) => {
   return new_comment.length > 0;
@@ -265,8 +299,10 @@ const post_comment = () => {
         },
         body: JSON.stringify(state.new_comment),
       }).then((response) => {
-        console.log("response", response);
-        state.threads.unshift(state.new_comment)
+          console.log("response", response);
+          const clone = JSON.parse(JSON.stringify(state.new_comment));
+          state.threads.unshift(clone)
+          state.new_comment.comments[0].body = "";
       });
     });
 

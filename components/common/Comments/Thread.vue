@@ -4,10 +4,10 @@
 
       <div class="w-full flex flex-col justify-start content-start">
         <div class="flex flex-row justify-start align-end content-end mb-2">
-          <div class="w-[30px] h-[30px] me-2 bg-primary_accent rounded-full flex items-center justify-center">
-            <p class="text-white text-sm">{{ first_letter(comment.commenter.username) }}</p>
+          <div v-if="comment.commenter" class="w-[30px] h-[30px] me-2 bg-primary_accent rounded-full flex items-center justify-center">
+            <p class="text-white text-sm">{{ first_letter(comment?.commenter?.username) }}</p>
           </div>
-          <p class="text-neutral-500 text-lg">{{ comment.commenter.username }}</p>
+          <p class="text-neutral-500 text-lg">{{ comment?.commenter?.username }}</p>
         </div>
         <div class="flex flex-col">
           <p class="text-xs text-zinc-600" v-html="calculate_time_commented(props.thread.createdAt)"></p>
@@ -18,7 +18,7 @@
       <p class="text-sm text-zinc-500 mt-4">Replies ({{ comment.replies.length }})</p>
       <div class="w-full px-4 flex flex-col">
         <div v-for="(reply, b) in comment.replies" :key="b" class="w-full flex flex-row flex-wrap mt-2">
-          <p class="text-neutral-600 text-bold text-xs">{{ reply.user.username }}: 
+          <p v-if="reply.user" class="text-neutral-600 text-bold text-xs">{{ reply.user.username }}: 
             <span class="text-neutral-500 font-normal text-xs">{{ reply.body }}</span>
           </p>
         </div>
@@ -42,7 +42,7 @@
 
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 
   const props = defineProps({
     thread: {
