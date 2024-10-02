@@ -3,11 +3,11 @@
     <div v-if="!props.threads.length" class="font-thin text-sm mb-2">Kinda empty here. Log in and get the party started!</div>
 
     <div v-if="!state.form" class="w-full min-h-[8rem] mb-8 pb-8">
-      <textarea type="text" class="w-full h-full border-thin border-zinc-200 p-1" v-model="state.new_comment" :placeholder="state.logged_in ? 'comment' : 'log in before commenting'" />
+      <textarea type="text" class="w-full h-full border-thin border-zinc-200 p-1" v-model="state.new_comment" :placeholder="authStore.user ? 'comment' : 'log in before commenting'" />
       <button 
         class="w-full h-[32px] m-0 bg-primary_accent text-white" 
         :disabled="!state.logged_in"
-        :class="!state.logged_in ? 'cursor-not-allowed opacity-[0.5]' : 'hover:cursor-pointer'"
+        :class="!authStore.user ? 'cursor-not-allowed opacity-[0.5]' : 'hover:cursor-pointer'"
       >
         <font-awesome-icon :icon="['fas', 'paper-plane']" />
       </button> 
@@ -18,17 +18,18 @@
     </div>
 
     <div v-else class="w-full min-h-[10rem] mb-8 justify-center">
-    <!-- login/register form:-->
-      <div class="w-full flex flex-col items-center justify-center pe-10">
+    <!-- login/register form: login_username-->
+      <div v-if="authStore" class="w-full flex flex-col items-center justify-center pe-10">
         <input v-if="state.register_mode" type="text" v-model="state.credentials.username" class="w-full h-[30px] border-thin border-zinc-200 p-1 mb-2" placeholder="username" />
-        <input type="text" v-model="state.credentials.email" class="w-full h-[30px] border-thin border-zinc-200 p-1 mb-2" placeholder="email" />
+        <input v-if="state.register_mode" type="text" v-model="state.credentials.email" class="w-full h-[30px] border-thin border-zinc-200 p-1 mb-2" placeholder="email" />
+        <input v-else type="text" v-model="state.credentials.login_username" class="w-full h-[30px] border-thin border-zinc-200 p-1 mb-2" placeholder="login email" />   
         <input type="password" v-model="state.credentials.password" class="w-full h-[30px] border-thin border-zinc-200 p-1 mb-2" placeholder="password" />
         <div class="w-full flex flex-row content-center justify-start">
           <button 
             v-if="state.login_mode"
             class="h-[32px] me-2 px-4 bg-primary_accent text-white" 
-            :class="!state.valid.email ? 'cursor-not-allowed opacity-[0.5]' : 'hover:cursor-pointer'"
-            :disabled="!state.valid.email || !state.valid.password" 
+            :class="!state.valid.login_username || !state.valid.password ? 'cursor-not-allowed opacity-[0.5]' : 'hover:cursor-pointer'"
+            :disabled="!state.valid.login_username || !state.valid.password" 
             @click="login"
           >Login</button>
           <button 
@@ -39,15 +40,20 @@
             @click="register"
           >Register</button>
         </div>
-        <div class="w-full flex flex-row justify-start text-start">
-          <small v-if="state.error?.length" class="text-xs text-red-500 mt-2">
-            <em>{{ state.error }}</em>
+        <div v-if="state.register_mode" class="w-full flex flex-row justify-start text-start">
+          <small v-if="authStore.error?.length" class="text-xs text-red-500 mt-2">
+            <em>{{ authStore.error }}</em>
           </small>
-          <small v-if="state.success?.length" class="text-xs text-green-500 mt-2">
-            <em>{{ state.success }}</em>
+          <small v-if="authStore.success" class="text-xs text-green-500 mt-2">
+            <em>{{ authStore.success }}</em>
           </small>
           <small v-else class="text-xs text-neutral-500 mt-2">
             <em>Passwords must have at least 8 characters, 1 uppercase, 1 lowercase, 1 number, and 1 special character</em>
+          </small>
+        </div>
+        <div v-if="state.login_mode" class="w-full flex flex-row justify-start text-start">
+          <small v-if="authStore.error?.length" class="text-xs text-red-500 mt-2">
+            <em>{{ authStore.error }}</em>
           </small>
         </div>
         <div class="w-full flex flex-row justify-start content-start">
@@ -85,10 +91,12 @@ const state = reactive({
     username: "",
     email: "",
     password: "",
+    login_username: "",
   },
   logged_in: false,
   logging_in: false,
   valid: {
+    login_username: false,
     username: false,
     email: false,
     password: false,
@@ -122,14 +130,36 @@ const validate_username = (username: String) => {
   return username.length > 2;
 };
 
+// validate login_username
+const validate_login_username = (login_username: String) => {
+  return login_username.length > 2;
+};
+
 // login
 const toggle_login = () => {
   state.form = true;
   state.login_mode = true;
   state.register_mode = false;
+  state.error = false;
+  state.success = false;
 };
 const login = () => {
-  console.log("logging in");
+  if(state.valid.login_username && state.valid.password) {
+    console.log("logging in");
+    state.success = authStore.logIn(state.credentials.login_username, state.credentials.password, route.currentRoute.value.path);
+
+    nextTick(() => {
+      state.success = false;
+      // clear form:
+      state.credentials.email = "";
+      state.credentials.password = "";
+      state.valid.email = false;
+      state.valid.password = false;
+    });
+  }
+  else {
+    console.log("invalid email or password", state.valid.email, state.valid.password);
+  }
 };
 
 // register
@@ -137,11 +167,23 @@ const toggle_register = () => {
   state.form = true;
   state.register_mode = true;
   state.login_mode = false;
+  state.error = false;
+  state.success = false;
 };
 const register = () => {
   if(state.valid.email && state.valid.password) {
     console.log("registering");
-     authStore.register(state.credentials.email, state.credentials.password, route.currentRoute.value.path);
+     state.success = authStore.register(state.credentials.username, state.credentials.email, state.credentials.password, route.currentRoute.value.path);
+     nextTick(() => {
+       state.success = false;
+       // clear form:
+        state.credentials.email = "";
+        state.credentials.password = "";
+        state.credentials.username = "";
+        state.valid.email = false;
+        state.valid.password = false;
+        state.valid.username = false;
+     });
   }
  else {
     console.log("invalid email or password", state.valid.email, state.valid.password);
@@ -150,10 +192,11 @@ const register = () => {
 };
 
 // Watch for changes in the email and password fields:
-watch([() => state.credentials.email, () => state.credentials.password, () => state.credentials.username], ([email, password, username]) => {
+watch([() => state.credentials.login_username, () => state.credentials.email, () => state.credentials.password, () => state.credentials.username], ([login_username, email, password, username]) => {
   state.valid.email = validate_email(email);
   state.valid.password = validate_password(password);
   state.valid.username = validate_username(username);
+  state.valid.login_username = validate_login_username(login_username);
 });
 </script>
 <style lang="scss"></style>

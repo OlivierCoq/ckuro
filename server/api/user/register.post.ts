@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   // import postmark:
 
   const post_data = await readBody(event);
-  console.log('coming from register frontend', post_data);
+  // console.log('coming from register frontend', post_data);
 
   /*
     - create btoa token 
@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      username: post_data.email,
+      username: post_data.username,
         email: post_data.email,
         password: post_data.password,
         confirmed: false,
@@ -59,6 +59,11 @@ export default defineEventHandler(async (event) => {
               <tr>
                   <td align="center" style="padding: 20px;">
                       <table role="presentation" style="width: 600px; border-collapse: collapse; border-radius: 10px;">
+                          <tr>
+                              <td align="center" style="padding: 0px;  border-radius: 10px; overflow: hidden;">
+                                  <img src="https://res.cloudinary.com/dgmz3uymj/image/upload/v1727827377/email_hero_img_c4ff32f645.jpg" alt="C.Kuro Logo" style="width: 100%; height: auto;">
+                              </td>
+                          </tr>
                           <tr style="margin: -4px 26px 30px 26px;
                               display: block;
                               padding: 30px;
@@ -67,8 +72,9 @@ export default defineEventHandler(async (event) => {
                               border-bottom-right-radius: 15px;"
                             >
                               <td>
-                                  <h1 style="margin: 0 0 20px; font-size: 24px; color: #333333;">Just makin' sure you're not a robot.</h1>
-                                  <a href="https://ckuro.cc/confirm-email?email=${post_data.email}&token=${token}&destination=${post_data.destination}" style="display: inline-block; padding: 10px 20px; margin: 0 0 20px; background-color: #ff6f61; color: #ffffff; text-decoration: none; border-radius: 5px;">Confirm Email</a>
+                                  <h1 style="margin: 0 0 20px; font-size: 24px; color: #333333;">Hey, ${post_data.username}! Just makin' sure you're not a robot.</h1>
+                                  <p style="margin: 0; font-size: 16px; color: #333333;">Click the button below to get the party started!</p>
+                                  <a href="https://ckuro.cc/confirm-email?email=${post_data.email}&token=${token}&destination=${post_data.route}" style="display: inline-block; padding: 10px 20px; margin: 0 0 20px; background-color: #ff6f61; color: #ffffff; text-decoration: none; border-radius: 5px;">Confirm Email</a>
                                   <p style="margin: 0; font-size: 16px; color: #333333;">See you on the other side.</p>
                               </td>
                           </tr>
@@ -80,7 +86,7 @@ export default defineEventHandler(async (event) => {
                       </table>
                   </td>
               </tr>
-          </table>
+          </table> 
       </body>
       </html>`
 

@@ -21,9 +21,39 @@ export const useAuthStore = defineStore({
   },
   actions: {
     // User methods:
-    async logIn() { }, 
+    async logIn(identifier, password) {
+  
+      $fetch(`${api_url}/api/auth/local`, {
+        method: 'POST',
+        body: JSON.stringify({ identifier, password }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      }).then((res) => {
+        console.log('user', res);
+        this.user = res.user;
+        this.token = res.jwt;
+        return {
+          user: res.user,
+          logged_in: true,
+          success: 'Logged in successfully'
+        }
+      }).catch((err) => {
+        console.error(err);
+      })
+  
+  }, 
+    async forceLogin(data) { 
+      console.log('force login', data);
+      this.user = data.user;
+      nextTick(() => {
+        // rediret to data.body.destination:
+        window.location.href = data.body.destination;
+      });
+    },
     async logOut() { },
-    async register(email, password, route) { 
+    async register(username, email, password, route) { 
       this.loading = true;
 
       /* 
@@ -38,7 +68,7 @@ export const useAuthStore = defineStore({
 
       $fetch('/api/user/register', {
         method: 'POST',
-        body: JSON.stringify({ email, password, route}),
+        body: JSON.stringify({ username, email, password, route}),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -47,9 +77,9 @@ export const useAuthStore = defineStore({
         console.log('leeets fucking go', res);
         nextTick(()=> {
           this.success = res.data
+          this.loading = false;
+          return this.success
         })
-        this.loading = false;
-        return this.success
       }).catch((err) => {
         console.error(err);
         this.loading = false;
