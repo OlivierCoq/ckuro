@@ -116,10 +116,17 @@
                 class="w-full h-[40px] flex flex-row justify-start items-center align-center mx-4 py-4"
               >
                 <div class="w-[10%] text-gray-400 font-thin ps-4"></div>
-                <div class="w-[40%] text-gray-400 font-thin">Title</div>
-                <div class="w-[25%] text-gray-400 font-thin">Artist</div>
-                <div class="w-[25%] text-gray-400 font-thin">
-                  <font-awesome-icon :icon="['fas', 'star']" color="#8d8484" />
+                <div class="w-[30%] text-gray-400 font-thin">
+                  <font-awesome-icon class="me-10" :icon="['fas', 'music']" color="#8d8484" />
+                </div>
+                <div class="w-[15%] text-gray-400 font-thin text-center">
+                  <font-awesome-icon class="me-10" :icon="['fas', 'microphone-lines']" color="#8d8484" />
+                </div>
+                <div class="w-[15%] text-gray-400 font-thin flex flex-row justify-start content-center">
+                  <font-awesome-icon class="me-10" :icon="['fas', 'record-vinyl']" color="#8d8484" />
+                </div>
+                <div class="w-[25%] text-gray-400 font-thin flex flex-row justify-start">
+                  <font-awesome-icon class="ms-2" :icon="['fas', 'star']" color="#8d8484" />
                 </div>
                 <!-- <div class="w-[15%] text-gray-400 font-thin">
                   <font-awesome-icon :icon="['fas', 'clock']" color="#8d8484" />

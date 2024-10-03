@@ -28,7 +28,7 @@
     <div class="w-[40%] text-gray-100 font-thin">
       <span>{{ props.track.title }}</span>
     </div>
-    <div class="w-[25%] text-gray-100 font-thin">
+    <div class="w-[15%] text-gray-100 font-thin">
       <p
         v-for="(artist, a) in props.track.music_artists"
         :key="a"
@@ -44,7 +44,10 @@
         </span>
       </p>
     </div>
-    <div class="w-[25%] font-thin">
+    <div class="w-[20%] text-gray-100 font-thin">
+      <span class="text-xs">{{ props.track.album.title }}</span>
+    </div>
+    <div class="w-[25%]  font-thin">
       <RatingSystem :track="props.track" />
     </div>
     <!-- <div class="w-[15%] text-gray-100 font-thin">
