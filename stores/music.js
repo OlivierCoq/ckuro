@@ -200,6 +200,8 @@ export const useMusicStore = defineStore({
           nextTick(() => {
             this.player.track = track
             nextTick(() => { this.fire_play() })
+            // wait until track is finished, and then play next track:
+            
           })
         }
       } else {

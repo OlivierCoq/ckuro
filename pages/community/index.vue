@@ -52,10 +52,15 @@
           class="w-full flex flex-col h-[70%] overflow-y-scroll align-start rounded-sm shadow-xl relative"
         >
           <h2
-            class="text-white text-md font-thin matrix hover-text-primary_accent cursor-pointer"
+            class="text-white text-md font-thin matrix  cursor-pointer"
           >
             Links
           </h2>
+          <div class="flex flex-row flex-wrap text-3xl mt-4">
+            <a href="https://discord.gg/vDnFquTF" class="cursor-pointer">
+              <font-awesome-icon class="me-3" :icon="['fab', 'discord']" color="#8d8484" />
+            </a>
+          </div>
         </div>
       </div>
     </div>
