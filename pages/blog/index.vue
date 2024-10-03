@@ -52,6 +52,7 @@
                 v-for="post in state.interface.search.results"
                 :key="post.id"
                 :post="post"
+                :store="authStore"
                 @select-post="state.select_post = post"
                 @closemodal="state.select_post = null"
               />
@@ -138,6 +139,7 @@ import PreviewCard from "./components/PreviewCard.vue";
 
 // Stores
 const blogStore = useBlogStore();
+const authStore = useAuthStore();
 
 // State
 const state = reactive({

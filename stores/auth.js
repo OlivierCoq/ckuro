@@ -56,7 +56,13 @@ export const useAuthStore = defineStore({
       // console.log(this.error);
       // console.log(this.success);
     },
-    async logOut() { },
+    async logOut() {
+      this.user = null;
+      this.token = null;
+      this.error = null;
+      this.success = null;
+      // console.log('logging out');
+     },
     async register(username, email, password, route) { 
       this.loading = true;
 

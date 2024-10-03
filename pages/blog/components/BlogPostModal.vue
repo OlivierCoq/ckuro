@@ -34,7 +34,13 @@
               <vue-markdown :source="post.body" />
             </div>
             <div class="w-full h-[600px]  lg:w-1/3">
-              <h3 class="text-neutral-900 matrix lg:ms-4">What the people are saying</h3>
+              <div class="w-full flex flex-col justify-start ps-4">
+                <h3 class="text-neutral-900 matrix">What the people are saying</h3>
+                <p v-if="props.store && props.store.user" class="font-thin text-neutral-900 mb-4">
+                  Logged in: <span class="font-bold">{{ props.store?.user?.username }}</span> 
+                  <span class="ms-2 lowercase hover:font-bold" @click="props.store.logOut">(Logout)</span>
+                </p>
+              </div>
               <p class="text-sm text-neutral-500 lg:ms-4">Comments ({{ props.post.comment_threads.length }})</p>
               <CommentsSection :target="props.post" :threads="props.post.comment_threads" /> 
             </div>
@@ -50,11 +56,16 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  store: {
+    type: Object,
+    required: true,
+  }
 });
 
 // components
 import VueMarkdown from "vue-markdown-render";
 import CommentsSection from '~/components/common/Comments/CommentsSection.vue';
+
 
 // Emit methods
 const emits = defineEmits(["close"]);

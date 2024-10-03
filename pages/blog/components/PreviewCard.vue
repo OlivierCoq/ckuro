@@ -18,6 +18,7 @@
     <BlogPostModal
       v-if="state.showBlogPostModal"
       :post="props.post"
+      :store="props.store"
       @close="close_modal"
     />
   </div>
@@ -28,11 +29,17 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  store: {
+    type: Object,
+    required: true,
+  }
 });
 
 const state = reactive({
   showBlogPostModal: false,
 });
+
+
 
 // Components
 import BlogPostModal from "./BlogPostModal.vue";
