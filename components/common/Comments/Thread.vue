@@ -24,12 +24,13 @@
         </div>
       </div>
 
-      <div class="w-full flex flex-row justify-center items-center mt-4">
-        <input type="text" class="w-[80%] h-[30px] border-thin border-zinc-200 p-1" v-model="state.new_comment" :placeholder="authStore.user ? 'reply' : 'log in before replying'" />
+      <div class="w-full flex flex-col justify-center items-center mt-4">
+        <textarea  class="w-full min-h-[60px] border-thin border-zinc-200 p-1" v-model="state.new_reply.body" :placeholder="authStore.user ? 'reply' : 'log in before replying'"></textarea>
         <button 
-          class="w-[20%] h-[32px] m-0 bg-primary_accent text-white" 
-          :disabled="!authStore.user || !state.new_comment.length"
-          :class="!authStore.user ? 'cursor-not-allowed opacity-[0.5]' : 'hover:cursor-pointer'"
+          class="w-full h-[25px] mt-2 bg-primary_accent text-white" 
+          :disabled="!authStore.user || !state.new_reply.body.length"
+          :class="!authStore.user || !state.new_reply.body.length ? 'cursor-not-allowed opacity-[0.5]' : 'hover:cursor-pointer'"
+          @click="post_reply"
         >
            <font-awesome-icon :icon="['fas', 'paper-plane']" />
         </button>
@@ -44,17 +45,28 @@
 </template>
 <script setup lang="ts">
 
+  import { defineProps, reactive, watch, onMounted, nextTick } from 'vue';
+  import qs from 'qs';
+
+
+
   const props = defineProps({
     thread: {
       type: Object,
       required: true,
     },
   });
+  
 
   const config = useRuntimeConfig();
   const authStore = useAuthStore();
   const state = reactive({
-    new_comment: "",
+    new_reply: {
+      active: true,
+      body: '',
+      user: authStore.user,
+      target: null
+    },
     logged_in: authStore.user
   });
 
@@ -108,6 +120,50 @@
       return `${seconds} seconds ago`;
     }
   };
+
+  const post_reply = ()  => {
+
+    console.log('commenting')
+    
+    nextTick(()=> {
+
+      // StarWars attack of the clones. I am sleep deprived.
+      let cloned_thread_comments = JSON.parse(JSON.stringify(props.thread.comments)), new_replies_arr = JSON.parse(JSON.stringify(props.thread.comments[0].replies)),
+      cloned_new_reply = JSON.parse(JSON.stringify(state.new_reply));
+      new_replies_arr.push(cloned_new_reply);
+      props.thread.comments[0].replies.push(cloned_new_reply);
+      cloned_thread_comments[0].replies = new_replies_arr
+
+
+        $fetch(`${config.public.NUXT_STRAPI_URL}/api/comment-threads/${props.thread.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            data: {
+              comments: cloned_thread_comments
+            }
+          })
+        }).then((res) => {
+          nextTick(()=> {
+            state.new_reply.body = '';
+            console.log('res', state.new_reply.body)
+          })
+          // const clone = JSON.parse(JSON.stringify(state.new_reply));
+          //   props.thread.comments[0].replies.push(clone);
+          //   nextTick(()=> {
+          //     state.new_reply.body = '';
+          //     console.log('res', state.new_reply.body)
+            
+          //   })
+        }).catch((err) => {
+          console.log(err);
+        })
+      
+    })
+
+  }
 
 </script>
 <style lang="scss">
