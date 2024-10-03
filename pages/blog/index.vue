@@ -155,6 +155,11 @@ const state = reactive({
     },
     tags: [],
     authors: [],
+    filters: {
+      title: {
+        $containsi: '',
+      },
+    },
     pagination: {
       page: 1,
       pageSize: 2,
@@ -177,6 +182,7 @@ const fetch_tags = async () => {
 
 // Fetch posts
 const init = async () => {
+  state.interface.filters.title.$containsi = state.interface.search.query;
   $fetch(`${config.public.NUXT_STRAPI_URL}/api/blog-posts`, {
     method: "GET",
     headers: {
@@ -195,11 +201,7 @@ const fetch_posts = async () => {
   $fetch(
     `${config.public.NUXT_STRAPI_URL}/api/blog-posts?${qs.stringify(
       {
-        filters: {
-          title: {
-            $containsi: state.interface.search.query,
-          },
-        },
+        filters: state.interface.filters,
         populate: [
           "title",
           "hero_image",
@@ -248,22 +250,34 @@ const doSearch = () => {
   //     .toLowerCase()
   //     .includes(state.interface.search.query.toLowerCase()),
   // );
-  fetch_posts();
-  state.clear = true;
+  state.interface.filters.title.$containsi = state.interface.search.query;
+  state.interface.pagination = {
+    page: 1,
+  };
+  nextTick(()=> {
+    fetch_posts();
+    state.clear = true;
+  })
 };
 
 const clearSearch = () => {
   state.interface.search.query = "";
+  state.interface.filters.title.$containsi = "";
+  state.interface.filters.blog_tags = {};
   state.interface.pagination = {
     page: 1,
     pageSize: 2,
     total: 0,
   };
-  fetch_posts();
+  nextTick(() => {
+    doSearch();
+  })
 };
 
 const filter_by_tag = (tag) => {
-  state.interface.search.query = tag.name;
+  state.interface.filters.blog_tags = {
+    id: tag.id,
+  };
   doSearch();
 };
 </script>
