@@ -30,10 +30,10 @@
             </h1>
           </div>
           <div class="w-full  flex flex-col lg:flex-row overflow-hidden">
-            <div class="w-full h-[600px] lg:w-2/3 post-body pe-8 overflow-y-scroll mb-4">
+            <div class="w-full min-h-[600px] lg:w-2/3 post-body pe-8 overflow-y-scroll mb-4">
               <vue-markdown :source="post.body" />
             </div>
-            <div class="w-full h-[600px]  lg:w-1/3">
+            <div class="w-full min-h-[600px]  lg:w-1/3">
               <div class="w-full flex flex-col justify-start ps-4">
                 <h3 class="text-neutral-900 matrix">What the people are saying</h3>
                 <p v-if="props.store && props.store.user" class="font-thin text-neutral-900 mb-4">

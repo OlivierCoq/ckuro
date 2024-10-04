@@ -119,7 +119,7 @@ export default defineEventHandler(async (event) => {
 
     front_end_response = {
       statusCode: 200,
-      data: `You're almost there! Please check your email to confirm your account.`,
+      data: `You're almost there! Please check your email to confirm your account. You won't be able to comment until you do. If you don't see it in your inbox, please check your spam folder!`,
     }
 
   }).catch((err) => {

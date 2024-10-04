@@ -34,6 +34,9 @@
         >
            <font-awesome-icon :icon="['fas', 'paper-plane']" />
         </button>
+        <p v-if="authStore.user && !authStore.user.confirmed" class="font-thin cursor-pointer mt-2 mb-4">
+        <span v-if="state.error" class="text-blue-500 text-xs font-normal">{{ state.error }}</span>
+        </p>
       </div>  
 
 
@@ -127,7 +130,12 @@
     
     nextTick(()=> {
 
-      // StarWars attack of the clones. I am sleep deprived.
+      if(!authStore.user.confirmed) {
+        state.error = "Woah, woah, woah! You need to confirm your account before you can comment. Check your email for the confirmation."
+        console.log("user not confirmed", authStore.user);
+      } else {
+
+              // StarWars attack of the clones. I am sleep deprived.
       let cloned_thread_comments = JSON.parse(JSON.stringify(props.thread.comments)), new_replies_arr = JSON.parse(JSON.stringify(props.thread.comments[0].replies)),
       cloned_new_reply = JSON.parse(JSON.stringify(state.new_reply));
       new_replies_arr.push(cloned_new_reply);
@@ -138,7 +146,8 @@
         $fetch(`${config.public.NUXT_STRAPI_URL}/api/comment-threads/${props.thread.id}`, {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authStore.token}`
           },
           body: JSON.stringify({
             data: {
@@ -160,6 +169,9 @@
         }).catch((err) => {
           console.log(err);
         })
+      }
+
+
       
     })
 

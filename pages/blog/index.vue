@@ -231,6 +231,7 @@ const fetch_posts = async () => {
   ).then((response) => {
     state.posts = response.data;
     state.interface.search.results = response.data;
+    
   });
 };
 
@@ -270,7 +271,8 @@ const clearSearch = () => {
     total: 0,
   };
   nextTick(() => {
-    doSearch();
+    fetch_posts();
+    state.clear = false;
   })
 };
 

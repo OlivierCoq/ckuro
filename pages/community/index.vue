@@ -38,6 +38,68 @@
                 />
               </button>
             </div>
+
+             <!-- New Post button, and logged in user -->
+            <div class="w-full h-[40px] flex flex-row justify-between items-start mb-4 px-4">
+              <button
+                class="border-thin border-light w-[33%] h-full font-thin flex flex-col justify-center align-center items-center hover:curser-pointer"
+                @click="communityStore.newPost"
+              >
+                <font-awesome-icon
+                  :icon="['fas', 'plus']"
+                  color="#8d8484"
+                />
+              </button>
+              <div v-if="authStore.user" class="w-[33%] flex flex-col justify-end items-end text-end">
+                <p class="text-white text-md font-thin">
+                  Logged in: <span class="font-bold">{{ authStore.user.username }}</span>
+                </p>
+                <p class="text-white text-md cursor-pointer" @click="authStore.logOut">Logout</p>
+              </div>
+              <div v-else class="w-[33%] flex flex-col justify-end items-end text-end">
+                <p class="text-white text-md font-thin cursor-pointer" @click="state.login_modal = !state.login_modal">
+                 Log in to post
+                </p>
+
+                <!-- Login modal: -->
+                <div v-if="state.login_modal" class="w-full h-full fixed top-0 left-0 bg-black bg-opacity-50 z-50 flex flex-col justify-center items-center">
+                  <div class="w-[400px] h-[400px] bg-white rounded-md shadow-xl flex flex-col justify-between items-center">
+                    <div class="w-full flex flex-row justify-end p-3">
+                      <font-awesome-icon
+                        :icon="['fas', 'times']"
+                        class="mx-3 cursor-pointer text-xl text-neutral-900"
+                        @click="state.login_modal = !state.login_modal"
+                      />
+                    </div>
+                    <div class="w-full flex flex-col justify-center items-center">
+                      <h2 class="text-2xl text-black font-thin">Login</h2>
+                      <input
+                        type="text"
+                        class="w-[90%] h-[40px] border-thin border-light p-2 mt-4"
+                        placeholder="Username"
+                        v-model="authStore.username"
+                      />
+                      <input
+                        type="password"
+                        class="w-[90%] h-[40px] border-thin border-light p-2 mt-4"
+                        placeholder="Password"
+                        v-model="authStore.password"
+                      />
+                      <button
+                        class="w-[90%] h-[40px] bg-primary_accent text-white mt-4"
+                        @click="authStore.logIn"
+                      >
+                        Login
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+            
+          
+
           </div>
         </div>
       </div>
@@ -74,7 +136,7 @@ import qs from "qs";
 // Meta
 definePageMeta({
   title: "cKuro - Community",
-  descripton: "gang",
+  descripton: "gang gang",
   layout: "community",
 });
 
@@ -82,16 +144,14 @@ definePageMeta({
 
 // Stores
 const communityStore = useCommunityStore();
+const authStore = useAuthStore();
 
 // State
 const state = reactive({
-  nav_links: [],
-  posts: [],
-  interface: {
-    tags: [],
-    authors: [],
-  },
+  login_modal: false
 });
+
+
 </script>
 <style lang="scss">
 .border-thin {
