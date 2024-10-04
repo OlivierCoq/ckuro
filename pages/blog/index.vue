@@ -57,7 +57,7 @@
                 @closemodal="state.select_post = null"
               />
             </div>
-            <!-- Navigation -->
+            // <!-- Navigation -->
             <div
               class="w-[95%] h-[40px] bg-zinc-500/30 mx-auto mt-4 flex flex-col justify-center items-center align-center"
             >

@@ -40,7 +40,7 @@
             </div>
 
              <!-- New Post button, and logged in user -->
-            <div class="w-full h-[40px] flex flex-row justify-between items-start mb-4 px-4">
+            <div id="top_panel" class="w-full h-[40px] flex flex-row justify-between items-start mb-4 px-4">
               <button
                 class="border-thin border-light w-[33%] h-full font-thin flex flex-col justify-center align-center items-center hover:curser-pointer"
                 @click="communityStore.newPost"
@@ -50,7 +50,8 @@
                   color="#8d8484"
                 />
               </button>
-              <div v-if="authStore.user" class="w-[33%] flex flex-col justify-end items-end text-end">
+
+              <div v-if="authStore.user" class="w-[50%] flex flex-col justify-end items-end text-end">
                 <p class="text-white text-md font-thin">
                   Logged in: <span class="font-bold">{{ authStore.user.username }}</span>
                 </p>
@@ -63,7 +64,7 @@
                 </p>
 
                 <!-- Login modal: -->
-                <div v-if="state.login_modal" class="w-full h-full fixed top-0 left-0 bg-black bg-opacity-50 z-50 flex flex-col justify-center items-center">
+                <div v-if="state.login_modal" id="auth_modal" class="w-full h-full fixed top-0 left-0 bg-black bg-opacity-50 z-50 flex flex-col justify-center items-center">
                   <div class="w-[400px] h-[400px] bg-white rounded-md shadow-xl flex flex-col justify-between items-center">
                     <div class="w-full h-[10%] flex flex-row justify-end p-3">
                       <font-awesome-icon
@@ -91,9 +92,13 @@
                 </div>
                 
               </div>
+
             </div>
             
-          
+            <!-- Posts -->
+            <div class="flex-1 w-[95%] mx-auto flex flex-col overflow-y-scroll mt-2">
+              <Post v-for="post in state.posts" :key="post.id" :post="post" />
+            </div>
 
           </div>
         </div>
@@ -137,31 +142,67 @@ definePageMeta({
 
 // Components
 import AuthBox from '~/components/common/AuthBox.vue'
+import NewPost from './components/NewPost.vue'
+import Post from './components/Post.vue'
 
 // Stores
+  // I dunno if I wanna use a store, tbh
 const communityStore = useCommunityStore();
 const authStore = useAuthStore();
 
 // State 
 const state = reactive({
   login_modal: false,
-  mode: 'none'
+  mode: 'none',
+  posts: []
 });
 
 // Methods
+
+  // Login/ Register toggles
 const toggle_login = () => {
   state.login_modal = true;
   console.log('toggling login');
   state.mode = 'login';
   
 }
-
 const toggle_register = () => {
   state.login_modal = true;
   console.log('toggling register');
   state.mode = 'register';
   
 }
+
+// Get posts
+const getPosts = () => {
+  $fetch(`${config.public.NUXT_STRAPI_URL}/api/community-posts?${qs.stringify(
+    {
+      populate: [
+        'title',
+        'user',
+        'body',
+        'pics',
+        'visible',
+        'comment_threads',
+        'post_reactions',
+        'external_links'
+      ],
+  },
+  { encodeValuesOnly: true, arrayFormat: "brackets" }
+  )}`, {
+    method: 'GET'
+  }).then((response) => {
+    state.posts = response.data;
+  }).catch((error) => {
+    console.log(error);
+  });
+
+
+}
+
+onMounted(() => {
+  getPosts();
+});
 
 </script>
 <style lang="scss">

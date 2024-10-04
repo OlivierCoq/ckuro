@@ -5,7 +5,7 @@
       <div class="w-full flex flex-col justify-start content-start">
         <div class="flex flex-row justify-start align-end content-end mb-2">
           <div v-if="comment.commenter" class="w-[30px] h-[30px] me-2 bg-primary_accent rounded-full flex items-center justify-center">
-            <p class="text-white text-sm">{{ first_letter(comment?.commenter?.username) }}</p>
+            <p class="text-white text-sm matrix">{{ first_letter(comment?.commenter?.username) }}</p>
           </div>
           <p class="text-neutral-500 text-lg">{{ comment?.commenter?.username }}</p>
         </div>
