@@ -21,7 +21,7 @@
       </p>
     </div>
     
-    <AuthBox v-else :mode="state.mode" @toggleself="state.form = false"  />
+    <AuthBox v-else :mode="state.mode" @toggleself="state.form = false" :comments="true" />
 
 
 

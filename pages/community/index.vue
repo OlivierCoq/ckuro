@@ -57,40 +57,35 @@
                 <p class="text-white text-md cursor-pointer" @click="authStore.logOut">Logout</p>
               </div>
               <div v-else class="w-[33%] flex flex-col justify-end items-end text-end">
-                <p class="text-white text-md font-thin cursor-pointer" @click="state.login_modal = !state.login_modal">
-                 Log in to post
+                <p class="text-white text-md font-thin cursor-pointer">
+                 <span class="hover:font-bold" @click="toggle_login">Login</span> /
+                 <span class="hover:font-bold" @click="toggle_register">Register</span> to post
                 </p>
 
                 <!-- Login modal: -->
                 <div v-if="state.login_modal" class="w-full h-full fixed top-0 left-0 bg-black bg-opacity-50 z-50 flex flex-col justify-center items-center">
                   <div class="w-[400px] h-[400px] bg-white rounded-md shadow-xl flex flex-col justify-between items-center">
-                    <div class="w-full flex flex-row justify-end p-3">
+                    <div class="w-full h-[10%] flex flex-row justify-end p-3">
                       <font-awesome-icon
                         :icon="['fas', 'times']"
                         class="mx-3 cursor-pointer text-xl text-neutral-900"
-                        @click="state.login_modal = !state.login_modal"
-                      />
+                        @click="state.login_modal = false"
+                      /> 
                     </div>
-                    <div class="w-full flex flex-col justify-center items-center">
-                      <h2 class="text-2xl text-black font-thin">Login</h2>
-                      <input
-                        type="text"
-                        class="w-[90%] h-[40px] border-thin border-light p-2 mt-4"
-                        placeholder="Username"
-                        v-model="authStore.username"
-                      />
-                      <input
-                        type="password"
-                        class="w-[90%] h-[40px] border-thin border-light p-2 mt-4"
-                        placeholder="Password"
-                        v-model="authStore.password"
-                      />
-                      <button
-                        class="w-[90%] h-[40px] bg-primary_accent text-white mt-4"
-                        @click="authStore.logIn"
-                      >
-                        Login
-                      </button>
+
+                    <div class="w-full h-[90%] px-4 flex flex-col justify-center items-center">
+                      <h2 class="my-2 text-2xl font-thin matrix">Let's get it</h2>
+                        <!-- Fucking kill me then: -->
+                      <AuthBox v-if="state.mode == 'login'" :mode="state.mode" @togglelogin="toggle_login" @toggleregister="toggle_register" @login="state.login_modal = false" />
+                      <AuthBox v-else :mode="state.mode" @togglelogin="toggle_login" @toggleregister="toggle_register" @register="state.login_modal = false" />
+                      <div class="w-full mt-4">
+                        <p v-if="state.mode == 'login'" class="text-neutral-500 text-sm font-thin text-center">
+                          Don't have an account? <span class="text-primary-500 cursor-pointer font-bold" @click="toggle_register">Register</span>
+                        </p>
+                        <p v-else class="text-neutral-500 text-sm font-thin text-center">
+                          Already have an account? <span class="text-primary-500 cursor-pointer font-bold" @click="toggle_login">Login</span>
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -141,16 +136,32 @@ definePageMeta({
 });
 
 // Components
+import AuthBox from '~/components/common/AuthBox.vue'
 
 // Stores
 const communityStore = useCommunityStore();
 const authStore = useAuthStore();
 
-// State
+// State 
 const state = reactive({
-  login_modal: false
+  login_modal: false,
+  mode: 'none'
 });
 
+// Methods
+const toggle_login = () => {
+  state.login_modal = true;
+  console.log('toggling login');
+  state.mode = 'login';
+  
+}
+
+const toggle_register = () => {
+  state.login_modal = true;
+  console.log('toggling register');
+  state.mode = 'register';
+  
+}
 
 </script>
 <style lang="scss">

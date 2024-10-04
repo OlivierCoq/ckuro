@@ -40,7 +40,7 @@
               <em>{{ state.error }}</em>
             </small>
           </div>
-          <div class="w-full flex flex-row justify-start content-start">
+          <div v-if="props.comments" class="w-full flex flex-row justify-start content-start">
             <font-awesome-icon :icon="['fas', 'arrow-left']" class="text-xl text-neutral-800 cursor-pointer mt-2" @click="toggle_self" />
           </div>
         </div>
@@ -55,6 +55,10 @@
       type: String,
       required: true,
     },
+    comments: {
+      type: Boolean,
+      required: false,
+    }
   })
 
   // Stores
@@ -120,7 +124,7 @@ const validate_login_username = (login_username: String) => {
 
 
 // Emit methods
-const emits = defineEmits(["togglelogin", "toggleregister", "toggleself"]); 
+const emits = defineEmits(["togglelogin", "toggleregister", "toggleself", "login", "register"]); 
 
 // login
 const toggle_login = () => {
@@ -144,7 +148,7 @@ const login = async () => {
       state.valid.email = false;
       state.valid.password = false;
       
-
+      emits("login");
 
     });
     
@@ -181,6 +185,7 @@ const register = () => {
         state.valid.email = false;
         state.valid.password = false;
         state.valid.username = false;
+        emits("register");
      });
   }
  else {
