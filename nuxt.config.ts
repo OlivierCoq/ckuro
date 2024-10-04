@@ -34,6 +34,10 @@ export default defineNuxtConfig({
           rel: "stylesheet",
           href: "https://vjs.zencdn.net/7.2.3/video-js.css",
         },
+        {
+          rel: "stylesheet",
+          href: "https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css",
+        },
       ],
       script: [
         {
@@ -47,7 +51,7 @@ export default defineNuxtConfig({
         {
           src: "https://app.ecwid.com/script.js?104674311&data_platform=code&data_date=2024-08-07",
           dataCfasync: false,
-        },
+        }
       ],
     },
   },
