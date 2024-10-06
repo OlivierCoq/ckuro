@@ -7,19 +7,19 @@
           <div v-if="comment.commenter" class="w-[30px] h-[30px] me-2 bg-primary_accent rounded-full flex items-center justify-center">
             <p class="text-white text-sm matrix">{{ first_letter(comment?.commenter?.username) }}</p>
           </div>
-          <p class="text-neutral-500 text-lg">{{ comment?.commenter?.username }}</p>
+          <p class="text-neutral-500 dark:text-white text-lg">{{ comment?.commenter?.username }}</p>
         </div>
         <div class="flex flex-col">
-          <p class="text-xs text-zinc-600" v-html="calculate_time_commented(props.thread.createdAt)"></p>
-          <p class="text-neutral-900 text-lg mt-4" v-html="comment.body"></p>
+          <p class="text-xs text-zinc-600 dark:text-zinc-200" v-html="calculate_time_commented(props.thread.createdAt)"></p>
+          <p class="text-neutral-900 dark:text-white text-lg mt-4" v-html="comment.body"></p>
         </div>
       </div>
 
-      <p class="text-sm text-zinc-500 mt-4">Replies ({{ comment.replies.length }})</p>
+      <p class="text-sm text-zinc-500 dark:text-white mt-4">Replies ({{ comment.replies.length }})</p>
       <div class="w-full px-4 flex flex-col">
         <div v-for="(reply, b) in comment.replies" :key="b" class="w-full flex flex-row flex-wrap mt-2">
-          <p v-if="reply.user" class="text-neutral-600 text-bold text-xs">{{ reply.user.username }}: 
-            <span class="text-neutral-500 font-normal text-xs">{{ reply.body }}</span>
+          <p v-if="reply.user" class="text-neutral-600 dark:text-neutral-300 text-bold text-xs">{{ reply.user.username }}: 
+            <span class="text-neutral-500 dark:text-white font-normal text-xs">{{ reply.body }}</span>
           </p>
         </div>
       </div>
@@ -58,6 +58,10 @@
       type: Object,
       required: true,
     },
+    dark: {
+      type: Boolean,
+      default: false,
+    }
   });
   
 
@@ -108,19 +112,19 @@
     const months = Math.floor(weeks / 4);
     const years = Math.floor(months / 12);
     if (years > 0) {
-      return `${years} years ago`;
+      return `${years} year${years > 1 ? 's' : ''} ago`;
     } else if (months > 0) {
-      return `${months} months ago`;
+      return `${months} month${months > 1 ? 's' : ''} ago`;
     } else if (weeks > 0) {
-      return `${weeks} weeks ago`;
+      return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
     } else if (days > 0) {
-      return `${days} days ago`;
+      return `${days} day${days > 1 ? 's' : ''} ago`;
     } else if (hours > 0) {
-      return `${hours} hours ago`;
+      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
     } else if (minutes > 0) {
-      return `${minutes} minutes ago`;
+      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
     } else {
-      return `${seconds} seconds ago`;
+      return `${seconds} second${seconds > 1 ? 's' : ''} ago`;
     }
   };
 

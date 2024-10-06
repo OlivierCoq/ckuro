@@ -42,7 +42,7 @@
                 </p>
               </div>
               <p class="text-sm text-neutral-500 lg:ms-4">Comments ({{ props.post.comment_threads.length }})</p>
-              <CommentsSection :target="props.post" :threads="props.post.comment_threads" /> 
+              <CommentsSection :target="props.post" :threads="props.post.comment_threads" :target-type="'blog_posts'" :dark="false" /> 
             </div>
           </div>
         </div>

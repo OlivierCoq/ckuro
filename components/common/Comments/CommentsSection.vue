@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full rounded-md p-4 flex flex-col justify-start">
+  <div class="ctr-comment_section w-full h-full rounded-md p-4 flex flex-col justify-start" :class="props.dark ? 'dark' : ''">
     <div v-if="!props.threads.length" class="font-thin text-sm mb-2">Kinda empty here. Log in and get the party started!</div>
 
     <div v-if="!state.form" class="w-full mb-10">
@@ -26,7 +26,7 @@
 
 
     <div class="w-full min-h-[15rem] mt-10 mb-3 overflow-y-scroll">
-      <Thread v-for="(thread, a) in state.threads" :key="a" :thread="thread" />
+      <Thread v-for="(thread, a) in state.threads" :key="a" :thread="thread" :dark="props.dark" />
     </div>
     
   </div>
@@ -46,6 +46,14 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  dark: {
+    type: Boolean,
+    default: true,
+  },
+  targetType: {
+    type: String,
+    required: true
+  }
 });
 
 // Components
@@ -90,12 +98,13 @@ const state = reactive({
 });
 
 
-const get_comments = () => {
+const get_comments = (target: String) => {
+
+  let filters = {}
+  filters[props.targetType] = props.target.id;
   
   $fetch(`${config.public.NUXT_STRAPI_URL}/api/comment-threads?${qs.stringify({
-    filters: {
-      blog_posts: props.target.id,
-    },
+    filters: filters,
     populate: [
       "comments",
       "comments.commenter",
@@ -114,7 +123,7 @@ const get_comments = () => {
 
 };
 onMounted(()=> {
-  get_comments();
+  get_comments(props.targetType);
 })
 
 // login

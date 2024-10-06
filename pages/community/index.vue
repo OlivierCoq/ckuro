@@ -43,13 +43,30 @@
             <div id="top_panel" class="w-full h-[40px] flex flex-row justify-between items-start mb-4 px-4">
               <button
                 class="border-thin border-light w-[33%] h-full font-thin flex flex-col justify-center align-center items-center hover:curser-pointer"
-                @click="communityStore.newPost"
+                @click="state.new_post_modal = true"
               >
                 <font-awesome-icon
                   :icon="['fas', 'plus']"
                   color="#8d8484"
                 />
               </button>
+
+              <!-- New post modal -->
+              <div v-if="state.new_post_modal" id="new_post_modal" class="w-full h-full fixed top-0 left-0 bg-black bg-opacity-50 z-50 flex flex-col justify-center items-center">
+                <div class="w-[90vw] h-[60vh] bg-white/80 rounded-md shadow-xl flex flex-col justify-start items-start">
+                  <div class="w-full h-[5%] flex flex-row justify-end p-3">
+                    <font-awesome-icon
+                      :icon="['fas', 'times']"
+                      class="mx-3 cursor-pointer text-xl text-neutral-900"
+                      @click="state.new_post_modal = false"
+                    /> 
+                  </div>
+                  <div class="w-full h-[95%] px-4 flex flex-col justify-start items-start">
+                    <h2 class="my-2 text-2xl font-thin matrix text-start">New Post</h2>
+                    <NewPost @newpost="refreshPosts" />
+                  </div>
+                </div>
+              </div>
 
               <div v-if="authStore.user" class="w-[50%] flex flex-col justify-end items-end text-end">
                 <p class="text-white text-md font-thin">
@@ -153,6 +170,7 @@ const authStore = useAuthStore();
 // State 
 const state = reactive({
   login_modal: false,
+  new_post_modal: false,
   mode: 'none',
   posts: []
 });
@@ -184,6 +202,8 @@ const getPosts = () => {
         'pics',
         'visible',
         'comment_threads',
+        'comment_threads.comments',
+        'comment_threads.comments.community_posts',
         'post_reactions',
         'external_links'
       ],
@@ -202,7 +222,15 @@ const getPosts = () => {
 
 onMounted(() => {
   getPosts();
+  
 });
+
+const refreshPosts = () => {
+  getPosts();
+  nextTick(()=> {
+    state.new_post_modal = false
+  })
+}
 
 </script>
 <style lang="scss">
