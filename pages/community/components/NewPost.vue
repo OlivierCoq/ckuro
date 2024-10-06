@@ -14,9 +14,9 @@
             <p class="text-neutral-800 font-thin">Upload images</p>
             <input type="file" multiple @change="uploadPics" />
           </div>
-          <div class="w-full h-[200px] border-thin border-zinc-200 p-1 mt-4">
+          <!-- <div class="w-full h-[200px] border-thin border-zinc-200 p-1 mt-4">
             <input type="text" v-model="state.new_post.external_links" placeholder="External links" class="w-full h-full bg-transparent text-white font-thin search" />
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="mt-4 w-1/2 lg:w-[200px]">
