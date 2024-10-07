@@ -1,5 +1,5 @@
 <template>
-  <div :id="`post-${props.post.id}`" class="w-full  pt-4 px-4 pb-8 flex flex-col justify-start place-items-start align-start mb-4 bg-zinc-500/30 cursor-pointer">
+  <div :id="`post-${props.post.id}`" class="w-[98%]  pt-4 px-4 pb-8 flex flex-col justify-start place-items-start align-start mb-4 bg-zinc-500/30 cursor-pointer">
 
      <div id="top_panel" class="w-full flex flex-row p-2 justify-start">
       <div v-if="props.post.user" class="w-[30px] h-[30px] me-2 bg-primary_accent rounded-full flex items-center justify-center">

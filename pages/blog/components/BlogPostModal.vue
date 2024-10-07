@@ -30,7 +30,7 @@
             </h1>
           </div>
           <div class="w-full  flex flex-col lg:flex-row overflow-hidden">
-            <div class="w-full min-h-[600px] lg:w-2/3 post-body pe-8 overflow-y-scroll mb-4">
+            <div class="w-full min-h-[600px] lg:w-2/3 post-body pe-8 overflow-y-scroll mb-4 text-neutral-900 dark:text-white">
               <vue-markdown :source="post.body" />
             </div>
             <div class="w-full min-h-[600px]  lg:w-1/3">
