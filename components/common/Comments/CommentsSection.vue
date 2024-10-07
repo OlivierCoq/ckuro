@@ -1,6 +1,6 @@
 <template>
   <div class="ctr-comment_section w-full h-full rounded-md p-4 flex flex-col justify-start" :class="props.dark ? 'dark' : ''">
-    <div v-if="!props.threads.length" class="font-thin text-sm mb-2">Kinda empty here. Log in and get the party started!</div>
+    <div v-if="!props.threads.length" class="font-thin text-sm mb-2 text-neutral-800 dark:text-white">Kinda empty here. Log in and get the party started!</div>
 
     <div v-if="!state.form" class="w-full mb-10">
       <textarea type="text" class="w-full h-1/2 border-thin border-zinc-200 p-1" v-model="state.new_comment.comments[0].body" :placeholder="authStore.user ? 'comment' : 'log in before commenting'" />
@@ -12,7 +12,7 @@
       >
         <font-awesome-icon :icon="['fas', 'paper-plane']" />
       </button> 
-      <p v-if="!authStore.user" class="font-thin cursor-pointer mt-2 mb-4">
+      <p v-if="!authStore.user" class="font-thin cursor-pointer mt-2 mb-4 text-neutral-800 dark:text-white">
         <span @click="toggle_login" class="hover:font-bold">Login</span> /
         <span @click="toggle_register" class="hover:font-bold">Register</span>
       </p>

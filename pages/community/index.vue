@@ -43,7 +43,9 @@
             <div id="top_panel" class="w-full h-[40px] flex flex-row justify-between items-start mb-4 px-4">
               <button
                 class="border-thin border-light w-[33%] h-full font-thin flex flex-col justify-center align-center items-center hover:curser-pointer"
+                :class="!authStore.user ? 'cursor-not-allowed opacity-[0.5]' : 'hover:cursor-pointer'"
                 @click="state.new_post_modal = true"
+                :disabled="!authStore.user"
               >
                 <font-awesome-icon
                   :icon="['fas', 'plus']"
@@ -54,11 +56,11 @@
               <!-- New post modal -->
               <div v-if="state.new_post_modal" id="new_post_modal" class="w-full h-full overflow-scroll fixed top-0 left-0 bg-black bg-opacity-50 z-50 flex flex-col justify-center items-center">
                 <div class="w-[90vw] min-h-[60vh] bg-zinc-800/80 rounded-md shadow-xl flex flex-col justify-start items-start">
-                  <div class="w-full h-[5%] flex flex-row justify-end p-3 dark:text-white">
+                  <div class="w-full h-[5%] flex flex-row justify-end p-3 text-white">
                     <font-awesome-icon
                       :icon="['fas', 'times']"
                       class="mx-3 cursor-pointer text-xl text-neutral-900"
-                      color="#fff"
+                      color="#ffffff"
                       @click="state.new_post_modal = false"
                     /> 
                   </div>
@@ -93,7 +95,7 @@
                     </div>
 
                     <div class="w-full h-[90%] px-4 flex flex-col justify-center items-center">
-                      <h2 class="my-2 text-2xl font-thin matrix">Let's get it</h2>
+                      <h2 class="my-2 text-2xl font-thin matrix text-neutral-800 dark:text-white">Let's get it</h2>
                         <!-- Fucking kill me then: -->
                       <AuthBox v-if="state.mode == 'login'" :mode="state.mode" @togglelogin="toggle_login" @toggleregister="toggle_register" @login="state.login_modal = false" />
                       <AuthBox v-else :mode="state.mode" @togglelogin="toggle_login" @toggleregister="toggle_register" @register="state.login_modal = false" />
