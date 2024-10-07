@@ -18,7 +18,8 @@
       </h2>
       <!-- body -->
       <div v-if="props.post.body" class="post-body pt-4 text-white">
-        <VueMarkdown :source="props.post.body" />
+        <!-- <VueMarkdown :source="props.post.body" /> -->
+         <div v-html="props.post.body"></div>
       </div>
          <!-- Pics -->
       <div v-if="props.post.pics" class="w-full mt-4 flex flex-col">

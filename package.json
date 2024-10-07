@@ -21,12 +21,15 @@
     "@nuxtjs/composition-api": "^0.34.0",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.1",
     "@pinia/nuxt": "^0.5.4",
+    "@primevue/themes": "^4.0.7",
     "@vueup/vue-quill": "^1.0.0-alpha.40",
     "core-js": "^3.38.1",
     "nuxt": "^3.12.4",
     "pinia": "^2.2.2",
     "postmark": "^4.0.5",
+    "primevue": "^4.0.7",
     "qs": "^6.13.0",
+    "quill": "^2.0.2",
     "shaka-player": "^4.11.4",
     "tiny-slider": "^2.9.4",
     "uuid": "^10.0.0",
@@ -35,6 +38,7 @@
     "vue-markdown-render": "^2.2.1"
   },
   "devDependencies": {
+    "@primevue/nuxt-module": "^4.0.7",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.41",
     "sass": "^1.77.8",

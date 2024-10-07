@@ -67,7 +67,6 @@ const route = useRouter();
 // State
 const state = reactive({
   new_comment: {
-    blog_posts: props.target,
     comments: [{
       commenter: authStore.user,
       body: "",
@@ -119,6 +118,10 @@ const get_comments = (target: String) => {
     },
   }).then((response) => {
     state.threads = response.data;
+    state.new_comment[props.targetType] = props.target.id;
+  }).catch((error) => {
+    console.log(error);
+    
   });
 
 };

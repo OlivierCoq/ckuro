@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import Aura from '@primevue/themes/aura'
+
 export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
   ssr: false,
@@ -68,7 +70,16 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-  modules: ["@pinia/nuxt", "@pinia-plugin-persistedstate/nuxt"],
+  modules: ["@pinia/nuxt", "@pinia-plugin-persistedstate/nuxt", "@primevue/nuxt-module"],
+  primevue: {
+    autoImport: true,
+    usePrimeVue: true,
+    options: {
+      theme: {
+        preset: Aura
+      }
+    }
+  },
   pinia: {
     autoImports: ["defineStore", ["defineStore", "definePiniaStore"]],
   },
