@@ -57,10 +57,8 @@
                 @closemodal="state.select_post = null"
               />
             </div>
-            // <!-- Navigation -->
-            <div
-              class="w-[95%] h-[40px] bg-zinc-500/30 mx-auto mt-4 flex flex-col justify-center items-center align-center"
-            >
+
+            <div class="navigation w-[95%] h-[40px] bg-zinc-500/30 mx-auto mt-4 flex flex-col justify-center items-center align-center">
               <div class="w-1/2 h-full mx-auto flex flex-row justify-center">
                 <button
                   class="w-[50px] h-full border-thin border-light hover:cursor-pointer"

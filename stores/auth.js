@@ -31,7 +31,7 @@ export const useAuthStore = defineStore({
           'Accept': 'application/json',
         },
       }).then((res) => {
-        console.log('user', res);
+        // console.log('user', res);
         this.user = res.user;
         this.token = res.jwt;
         this.error = false;

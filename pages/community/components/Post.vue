@@ -54,7 +54,7 @@
       </div>
 
       <!-- External links -->
-      <div v-if="props.post.external_links.length" class="w-full flex flex-col mt-4">
+      <div v-if="props.post.external_links.length" class="w-full flex flex-col my-4">
         <h3 class="text-white matrix lowercase">External Links</h3>
         <ul>
           <li v-for="(item, b) in props.post.external_links" :key="b">
@@ -68,6 +68,33 @@
           </li>
         </ul>
       </div>
+
+      <!-- Likes/Dislikes -->
+      <div class="w-full border-b-2 border-light mt-8 pb-4">
+        <div class="w-[70px] mt-4 flex flex-row justify-start">
+          <div class="w-[50%] flex flex-row justify-start items-center me-3">
+            <button 
+              class="w-[30px] h-[30px] text-white hover-text-primary_accent" 
+              :class="state.liked ? 'text-primary_accent' : ''" 
+              :disabled="state.liked || !authStore.user"
+              @click="upvote_post">
+              <font-awesome-icon :icon="['fas', 'thumbs-up']" />
+            </button>
+            <p class="text-white text-md ms-2 font-thin">{{ props.post.post_reactions.upvotes }}</p>
+          </div>
+          <div class="w-[50%] flex flex-row justify-end items-center">
+            <button 
+              class="w-[30px] h-[30px] bg-danger_accent text-white hover-text-primary_accent" 
+              :class="state.disliked ? 'text-primary_accent' : ''" 
+              :disabled="state.disliked || !authStore.user"
+              @click="downvote_post">
+              <font-awesome-icon :icon="['fas', 'thumbs-down']" />
+            </button>
+            <p class="text-white text-md ms-2 font-thin">{{ props.post.post_reactions.downvotes }}</p>
+          </div>
+        </div>
+      </div>
+
 
       <!-- Comments -->
       <div class="mt-4 w-full">
@@ -84,6 +111,11 @@
 </template>
 <script setup>
 
+  // Config
+  const config = useRuntimeConfig();
+
+  // Store
+  const authStore = useAuthStore();
 
   // props
   const props = defineProps({
@@ -99,6 +131,8 @@
     target_img: false,
     target_video: false,
     show_comments: false,
+    liked: false,
+    disliked: false
   });
 
   // components
@@ -155,8 +189,231 @@
       nav: true,
       autoplayTimeout: 5000,
     });
+
+    if(authStore.user) {
+          // check if user has already liked this post:
+      if(authStore?.user?.upvoted_community_posts !== null && authStore?.user?.upvoted_community_posts.data?.includes(props.post.id)) {
+        state.liked = true;
+      }
+      // check if user has already disliked this post:
+      if(authStore?.user?.downvoted_community_posts?.data?.includes(props.post.id)) {
+        state.disliked = true;
+      }
+    }
   })
 
+  const upvote_post = () => {
+    console.log('liked. Woohoo! 🎉');
+    state.disliked = false;
+
+
+    const no_dupe = () => {
+      return authStore.user.upvoted_community_posts === null ? true : !authStore.user.upvoted_community_posts.data.includes(props.post.id);
+    };
+
+    authStore.user.upvoted_community_posts = authStore.user.upvoted_community_posts === null ? 
+      { "data": [props.post.id] } : 
+      { "data": no_dupe() ? [...authStore.user.upvoted_community_posts.data, props.post.id] : authStore.user.upvoted_community_posts.data };
+
+
+      // If post is NOT in users downvoted array:
+    if(authStore.user.downvoted_community_posts !== null && !authStore.user.downvoted_community_posts.data.includes(props.post.id)) {
+      nextTick(()=> {
+        // update user in Strapi:
+        $fetch(`${config.public.NUXT_STRAPI_URL}/api/users/${authStore.user.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authStore.token}`
+          },
+          body: JSON.stringify({
+   
+              upvoted_community_posts: authStore.user.upvoted_community_posts
+            
+          })
+        }).then((response) => {
+          // console.log('upvote response', response);
+          state.liked = true;
+
+          props.post.post_reactions.number_of_votes += 1;
+          props.post.post_reactions.upvotes += 1;
+
+          // Update post in Strapi:
+          $fetch(`${config.public.NUXT_STRAPI_URL}/api/community-posts/${props.post.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authStore.token}`
+            },
+            body: JSON.stringify({
+              post_reactions: {
+                number_of_votes: props.post.post_reactions.number_of_votes,
+                upvotes: props.post.post_reactions.upvotes
+              }
+            })
+          }).then((response) => {
+            // console.log('post update response', response);
+          }).catch((error) => { console.log(error); })
+
+        }).catch((error) => { console.log(error); })
+
+
+      })
+    } else {
+      // remove post from downvoted array:
+      authStore.user.downvoted_community_posts.data = authStore.user.downvoted_community_posts.data.filter((id) => id !== props.post.id);
+
+      nextTick(()=> {
+        // update user in Strapi:
+        $fetch(`${config.public.NUXT_STRAPI_URL}/api/users/${authStore.user.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authStore.token}`
+          },
+          body: JSON.stringify({
+              upvoted_community_posts: authStore.user.upvoted_community_posts,
+              downvoted_community_posts: authStore.user.downvoted_community_posts
+          })
+        }).then((response) => {
+          console.log('upvote response', response);
+          state.liked = true;
+
+          props.post.post_reactions.upvotes += 1;
+
+          props.post.post_reactions.number_of_votes += 1;
+          props.post.post_reactions.downvotes -= 1;
+
+          // Update post in Strapi:
+          $fetch(`${config.public.NUXT_STRAPI_URL}/api/community-posts/${props.post.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authStore.token}`
+            },
+            body: JSON.stringify({
+              post_reactions: {
+                number_of_votes: props.post.post_reactions.number_of_votes,
+                downvotes: props.post.post_reactions.downvotes,
+                upvotes: props.post.post_reactions.upvotes
+              }
+            })
+          }).then((response) => {
+            console.log('post update response', response);
+          }).catch((error) => { console.log(error); })
+
+        }).catch((error) => { console.log(error); })
+      })
+    }
+  };
+
+  const downvote_post = () => {
+    console.log('disliked, sorry 😢');
+    state.liked = false;
+
+    const no_dupe = () => {
+      return authStore.user.downvoted_community_posts === null ? true : !authStore.user.downvoted_community_posts.data.includes(props.post.id);
+    }
+
+    authStore.user.downvoted_community_posts = authStore.user.downvoted_community_posts === null ? 
+      { "data": [props.post.id] } : 
+      { "data": no_dupe() ? [...authStore.user.downvoted_community_posts.data, props.post.id] : authStore.user.downvoted_community_posts.data };
+
+    // If post is NOT in users uppvoted array:
+    if(authStore.user.upvoted_community_posts !== null && !authStore.user.upvoted_community_posts.data.includes(props.post.id)) { 
+
+    
+      nextTick(()=> {
+        // update user in Strapi:
+        $fetch(`${config.public.NUXT_STRAPI_URL}/api/users/${authStore.user.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authStore.token}`
+          },
+          body: JSON.stringify({
+              downvoted_community_posts: authStore.user.downvoted_community_posts
+          })
+        }).then((response) => {
+          // console.log('downvote response', response);
+          state.disliked = true;
+
+          props.post.post_reactions.number_of_votes += 1;
+          props.post.post_reactions.downvotes += 1;
+
+          // Update post in Strapi:
+          $fetch(`${config.public.NUXT_STRAPI_URL}/api/community-posts/${props.post.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authStore.token}`
+            },
+            body: JSON.stringify({
+              post_reactions: {
+                number_of_votes: props.post.post_reactions.number_of_votes,
+                downvotes: props.post.post_reactions.downvotes
+              }
+            })
+          }).then((response) => {
+            // console.log('post update response', response);
+          }).catch((error) => { console.log(error); })
+
+        }).catch((error) => {
+          console.log(error);
+        })
+      })
+
+    } else {
+
+      // remove post from upvoted array:
+      authStore.user.upvoted_community_posts.data = authStore.user.upvoted_community_posts.data.filter((id) => id !== props.post.id);
+
+      nextTick(()=> {
+        // update user in Strapi:
+        $fetch(`${config.public.NUXT_STRAPI_URL}/api/users/${authStore.user.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authStore.token}`
+          },
+          body: JSON.stringify({
+              upvoted_community_posts: authStore.user.upvoted_community_posts,
+              downvoted_community_posts: authStore.user.downvoted_community_posts
+          })
+        }).then((response) => {
+          // console.log('downvote response', response);
+          state.disliked = true;
+
+          props.post.post_reactions.upvotes -= 1;
+
+          props.post.post_reactions.number_of_votes += 1;
+          props.post.post_reactions.downvotes += 1;
+
+          // Update post in Strapi:
+          $fetch(`${config.public.NUXT_STRAPI_URL}/api/community-posts/${props.post.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authStore.token}`
+            },
+            body: JSON.stringify({
+              post_reactions: {
+                number_of_votes: props.post.post_reactions.number_of_votes,
+                downvotes: props.post.post_reactions.downvotes,
+                upvotes: props.post.post_reactions.upvotes
+              }
+            })
+          }).then((response) => {
+            // console.log('post update response', response);
+          }).catch((error) => { console.log(error); })
+
+        }).catch((error) => {
+          console.log(error);
+        })
+      })
+    }
+    
+  };
 
 </script>
 <style lang="scss">

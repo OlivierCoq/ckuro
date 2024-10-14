@@ -43,6 +43,12 @@ export default defineEventHandler(async (event) => {
           ],
         },
         ck_token: token,
+        upvoted_community_posts: {
+          "data": []
+        },
+        downvoted_community_posts: {
+          "data": []
+        }
     }),
   }).then((res) => {
 

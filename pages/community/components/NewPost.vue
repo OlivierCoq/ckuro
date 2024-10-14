@@ -77,7 +77,12 @@
       external_links: [],
       visible: true,
       comment_threads: [],
-      post_reactions: {},
+      post_reactions: {
+        upvotes: 0,
+        downvotes: 0,
+        number_of_votes: 0,
+        vote: 0
+      },
       user: authStore.user
     },
     new_external_link: {
