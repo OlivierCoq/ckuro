@@ -2,7 +2,7 @@
   <div class="w-full h-full flex flex-col items-center justify-center">
     <div class="w-11/12 h-4/5 lg:h-3/5 flex flex-col items-center justify-center bg-white/20 rounded-lg">
       <div class="w-full h-4/5 lg:h-3/5 p-4 flex flex-col items-center justify-center">
-        <div v-if="state.error.length" class="w-full flex flex-row justify-center">
+        <div v-if="state.error.length > 1" class="w-full flex flex-row justify-center">
           <h1 class="text-2xl font-bold text-white matrix mb-10">
             {{ state.error }}
           </h1>

@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
         $eq: post_data.ck_token
       },
       email: {
-        $eq: 'coq.olivier36+18@gmail.com'
+        $eq: post_data.email
       }
     }
   })}`);
