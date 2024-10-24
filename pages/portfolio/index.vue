@@ -169,7 +169,7 @@
         </div>
         <!-- Blog tags, authors, and more here -->
         <div
-          class="w-full flex flex-col h-[70%] overflow-y-scroll align-start rounded-sm shadow-xl relative"
+          class="w-full flex flex-col  overflow-y-scroll align-start rounded-sm shadow-xl relative"
         >
           <!-- <h2
             class="text-white text-md font-thin matrix hover-text-primary_accent cursor-pointer"
@@ -177,6 +177,7 @@
             Tags
           </h2> -->
         </div>
+        <div v-if="state.page_block" id="html_block" class="html_block flex flex-col flex-1 mt-4 p-2 w-[14rem]" v-html="state.page_block"></div>
       </div>
     </div>
   </div>
@@ -211,6 +212,7 @@ const state = reactive({
   },
   comp: 0,
   target_video: false,
+  page_block: null,
 });
 
 // Methods
@@ -363,6 +365,56 @@ const select_previous = () => {
     });
   }
 };
+
+const fetch_page_block = async () => {
+  
+  $fetch(`${config.public.NUXT_STRAPI_URL}/api/pages?${qs.stringify({
+    populate: '*',
+    filters: {
+      title: 'Portfolio',
+    },
+  })}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((response) => {
+    state.page_block = response.data[0]?.html
+    nextTick(() => {
+      executeScripts();
+    })
+  });
+};
+fetch_page_block();
+
+const executeScripts = () => {
+  console.log('executing scripts');
+  const ctr_html_block = document.getElementById('html_block');
+  console.log(ctr_html_block);
+
+  // Find all script tags:
+  const scripts = ctr_html_block?.querySelectorAll('script');
+  // console.log(scripts?.length);
+
+  if(scripts?.length ) {
+    for(const script of scripts) {
+      const newScript = document.createElement('script');
+      newScript.type = script.type ? script.type : 'text/javascript';
+      if (script.src) {
+        newScript.src = script.src;
+      } else {
+        newScript.innerHTML = script.innerHTML;
+      }
+      document.head.appendChild(newScript);
+      document.head.removeChild(newScript);
+    }
+  }
+
+};
+
+onMounted(() => {
+  // executeScripts();
+});
 </script>
 <style lang="scss">
 .border-thin {

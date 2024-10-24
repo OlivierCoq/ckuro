@@ -116,7 +116,7 @@
             </div>
           </div>
         </div>
-        <div v-if="state.page_block" id="html_block" class="html_block flex flex-1 mt-4 p-2" v-html="state.page_block"></div>
+        <div v-if="state.page_block" id="html_block" class="html_block flex flex-col flex-1 mt-4 p-2 w-[14rem]" v-html="state.page_block"></div>
       </div>
     </div>
   </div>
