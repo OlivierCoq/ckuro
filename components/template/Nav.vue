@@ -5,26 +5,41 @@
   >
     <div v-if="props.links" class="w-full p-4 flex flex-col">
       <div v-for="(item, a) in props.links" :key="a" class="flex flex-row">
-        <div class="w-1/3 p-4">
-          <a
-            :href="item.link"
-            class="text-white text-xl font-thin matrix hover-text-primary_accent cursor-pointer uppercase"
-            :class="{ 'text-primary_accent': route.path === item.link }"
-            >{{ item.label }}</a
-          >
-        </div>
+        <a
+          :href="item.link"
+          class="text-white text-xl font-thin matrix hover-text-primary_accent cursor-pointer uppercase"
+          :class="{ 'text-primary_accent': route.path === item.link }"
+        >
+            <div class="mb-4">
+            {{ item.label }}
+            <img v-if="item.imagery" class="" :src="item.imagery[0]?.url" :alt="item.label">
+          </div>
+        </a>
       </div>
     </div>
     <div v-else-if="state.nav_links" class="w-full p-4 flex flex-col">
       <div v-for="(item, a) in state.nav_links" :key="a" class="flex flex-row">
-        <div class="w-1/3 p-4">
+        <a
+          :href="item.link"
+          class="text-white text-xl font-thin matrix hover-text-primary_accent cursor-pointer uppercase"
+          :class="{ 'text-primary_accent': route.path === item.link }"
+        >
+          <div class="mb-4">
+            {{ item.label }}
+            <img v-if="item.imagery" class="" :src="item.imagery[0]?.url" :alt="item.label">
+          </div>
+        </a>
+        <!-- <div class="w-1/3 p-4">
           <a
             :href="item.link"
             class="text-white text-xl font-thin matrix hover-text-primary_accent cursor-pointer uppercase"
             :class="{ 'text-primary_accent': route.path === item.link }"
-            >{{ item.label }}</a
+            >
+              {{ item.label }}
+              <img v-if="item.imagery" :src="item.imagery[0]?.url" :alt="item.label">
+            </a
           >
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
