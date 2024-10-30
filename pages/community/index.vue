@@ -17,7 +17,7 @@
             class="w-full h-full flex flex-col justify-start items-start align-start py-4"
           >
             <!-- Search -->
-            <div class="flex flex-row w-full mb-4 px-4">
+            <!-- <div class="flex flex-row w-full mb-4 px-4">
               <div class="w-[90%] h-[40px] border-thin border-light p-2 me-2">
                 <input
                   type="text"
@@ -37,7 +37,7 @@
                   color="#8d8484"
                 />
               </button>
-            </div>
+            </div> -->
 
              <!-- New Post button, and logged in user -->
             <div id="top_panel" class="w-full h-[40px] flex flex-row justify-between items-start mb-4 px-4">
