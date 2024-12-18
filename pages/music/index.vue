@@ -13,9 +13,7 @@
       <div class="w-full lg:w-[655px] h-full flex flex-col lg:flex-row me-5">
         <div class="ctr-main h-full shadow-xl me-5">
           <!-- Music meat + potatoes -->
-          <div
-            class="w-full h-full flex flex-col justify-start items-start align-start py-4"
-          >
+          <div class="w-full h-full flex flex-col justify-start items-start align-start py-4">
             <!-- Search -->
             <div class="flex flex-row w-full mb-4 px-4">
               <div class="w-[90%] h-[40px] border-thin border-light p-2 me-2">
@@ -48,16 +46,10 @@
             </div>
 
             <!-- Music list -->
-            <div
-              class="w-full h-full flex flex-col justify-start items-start align-start overflow-hidden"
-            >
+            <div class="w-full h-full flex flex-col justify-start items-start align-start overflow-hidden">
               <!-- Filters: -->
-              <div
-                class="w-full min-h-[160px] mb-4 flex flex-col justify-start items-start align-start"
-              >
-                <div
-                  class="w-full flex flex-wrap justify-end items-end align-end px-4 mb-4 h-[30px]"
-                >
+              <div class="w-full min-h-[160px] mb-4 flex flex-col justify-start items-start align-start">
+                <div class="w-full flex flex-wrap justify-end items-end align-end px-4 mb-4 h-[30px]">
                   <!-- clear Filters -->
                   <div
                     class="filter-box min-h-[40px] px-2 py-1 cursor-pointer rounded-md me-2 flex flex-row justify-center items-center ms-2 z-20"
